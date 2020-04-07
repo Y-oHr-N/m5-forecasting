@@ -34,7 +34,9 @@ def extract_features(df):
     intermediate = pd.DataFrame(intermediate, columns=["date"])
 
     for cal in cals:
-        intermediate[f"is_{cal.__class__.__name__.lower()}_holiday"] = intermediate["date"].apply(cal.is_holiday)
+        intermediate[f"is_{cal.__class__.__name__.lower()}_holiday"] = intermediate[
+            "date"
+        ].apply(cal.is_holiday)
 
     df = df.merge(intermediate, how="left", on="date")
 
@@ -59,14 +61,16 @@ def extract_features(df):
     # Create aggregated features
     for i in [1, 22]:
         for j in [7, 28]:
-            df[f"demand_shift_{i}_rolling_{j}_mean"] = (
-                grouped[f"demand_shift_{i}"].transform(lambda x: x.rolling(j, min_periods=1).mean())
-            )
+            df[f"demand_shift_{i}_rolling_{j}_mean"] = grouped[
+                f"demand_shift_{i}"
+            ].transform(lambda x: x.rolling(j, min_periods=1).mean())
 
-    df["sell_price_notnull_and_demand_shift_28_is_zero"] = (~df["sell_price_isnull"]) & (df["demand_shift_28"] == 0)
-    df["no_demand_period_shift_28"] = (
-        grouped["sell_price_notnull_and_demand_shift_28_is_zero"].transform(create_no_demand_period)
-    )
+    df["sell_price_notnull_and_demand_shift_28_is_zero"] = (
+        ~df["sell_price_isnull"]
+    ) & (df["demand_shift_28"] == 0)
+    df["no_demand_period_shift_28"] = grouped[
+        "sell_price_notnull_and_demand_shift_28_is_zero"
+    ].transform(create_no_demand_period)
 
     df.drop(columns="sell_price_notnull_and_demand_shift_28_is_zero", inplace=True)
 
