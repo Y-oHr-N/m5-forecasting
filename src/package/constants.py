@@ -18,9 +18,7 @@ calendar_features = [
 ]
 lag_features = [f"demand_shift_{i}" for i in periods]
 aggregated_features = [
-    f"demand_shift_{i}_rolling_{j}_mean"
-    for i in periods
-    for j in windows
+    f"demand_shift_{i}_rolling_{j}_mean" for i in periods for j in windows
 ]
 
 categorical_features = [
