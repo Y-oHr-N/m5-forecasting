@@ -4,10 +4,6 @@ __all__ = ["extract_features"]
 
 
 def extract_features(df):
-    # Create calendar features
-    for col in calendar_features:
-        df[col] = getattr(df["date"].dt, col)
-
     grouped = df.groupby(["store_id", "item_id"])
 
     for i in periods:

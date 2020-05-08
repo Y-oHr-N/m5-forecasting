@@ -3,7 +3,7 @@ windows = [7, 28]
 
 calendar_features = [
     "year",
-    # "dayofyear",
+    "dayofyear",
     "weekofyear",
     "quarter",
     "month",
