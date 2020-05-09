@@ -4,5 +4,6 @@ lightgbm
 numpy
 pandas
 papermill
+pyarrow
 tqdm
 workalendar
