@@ -39,6 +39,9 @@ numerical_features = (
         "snap_TX",
         "snap_WI",
         "sell_price",
+        "is_california_holiday",
+        "is_texas_holiday",
+        "is_wisconsin_holiday",
     ]
     + calendar_features
     + lag_features
