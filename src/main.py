@@ -16,7 +16,6 @@ work_dir_path.mkdir()
 tasks = [
     "preprocessing",
     "engineering",
-    "filtering",
     "training",
     "predicting",
     "postprocessing",
