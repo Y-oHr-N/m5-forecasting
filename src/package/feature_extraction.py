@@ -4,7 +4,11 @@ from workalendar.usa import Wisconsin
 
 from .constants import *
 
-__all__ = ["create_aggregated_features", "create_calendar_features", "create_lag_features"]
+__all__ = [
+    "create_aggregated_features",
+    "create_calendar_features",
+    "create_lag_features",
+]
 
 
 def create_aggregated_features(df):
