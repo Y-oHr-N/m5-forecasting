@@ -4,7 +4,14 @@ from workalendar.usa import Wisconsin
 
 from .constants import *
 
-__all__ = ["create_calendar_features", "create_lag_features"]
+__all__ = ["create_aggregated_features", "create_calendar_features", "create_lag_features"]
+
+
+def create_aggregated_features(df):
+    grouped = df.groupby(["store_id", "item_id"])
+
+    for agg_func in agg_funcs:
+        df[f"sell_price_{agg_func}"] = grouped["sell_price"].transform(agg_func)
 
 
 def create_calendar_features(df):

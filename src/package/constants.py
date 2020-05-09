@@ -1,5 +1,9 @@
+agg_funcs = ["min", "max", "mean", "std", "nunique"]
+
 periods = [7, 28]
 windows = [7, 28]
+
+aggregated_features = [f"sell_price_{agg_func}" for agg_func in agg_funcs]
 
 calendar_features = [
     "year",
@@ -16,8 +20,7 @@ calendar_features = [
     # "is_month_start",
     # "is_month_end",
 ]
-lag_features = [f"demand_shift_{i}" for i in periods]
-aggregated_features = [
+lag_features = [f"demand_shift_{i}" for i in periods] + [
     f"demand_shift_{i}_rolling_{j}_mean" for i in periods for j in windows
 ]
 
@@ -43,9 +46,9 @@ numerical_features = (
         "is_texas_holiday",
         "is_wisconsin_holiday",
     ]
+    + aggregated_features
     + calendar_features
     + lag_features
-    + aggregated_features
 )
 
 features = categorical_features + numerical_features
