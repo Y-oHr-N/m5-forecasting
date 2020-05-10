@@ -11,6 +11,12 @@ __all__ = [
 ]
 
 
+def weekofmonth(dt):
+    dt_first = dt.replace(day=1)
+
+    return (dt.day + dt_first.weekday() - 1) // 7
+
+
 def create_aggregated_features(df):
     grouped = df.groupby(["store_id", "item_id"])
 
@@ -20,7 +26,10 @@ def create_aggregated_features(df):
 
 def create_calendar_features(df):
     for col in calendar_features:
-        df[col] = getattr(df["date"].dt, col)
+        if col == "weekofmonth":
+            df[col] = df["date"].apply(weekofmonth)
+        else:
+            df[col] = getattr(df["date"].dt, col)
 
     cals = [
         California(),
