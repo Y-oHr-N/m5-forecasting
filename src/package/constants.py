@@ -12,7 +12,7 @@ calendar_features = [
     "month",
     "quarter",
     "day",
-    # "weekofmonth",
+    "weekofmonth",
     "weekday",
     # "is_year_start",
     # "is_year_end",
