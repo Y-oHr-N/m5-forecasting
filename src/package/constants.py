@@ -31,10 +31,8 @@ categorical_features = [
     "dept_id",
     "cat_id",
     "state_id",
-    "event_name_1",
-    "event_type_1",
-    "event_name_2",
-    "event_type_2",
+    "event_name",
+    "event_type",
 ]
 
 pct_change_features = [f"sell_price_pct_change_{i}" for i in periods]
