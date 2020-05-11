@@ -8,6 +8,7 @@ __all__ = [
     "create_aggregated_features",
     "create_calendar_features",
     "create_lag_features",
+    "create_pct_change_features",
 ]
 
 
@@ -53,3 +54,10 @@ def create_lag_features(df):
             df[f"demand_shift_{i}_rolling_{j}_mean"] = grouped[
                 f"demand_shift_{i}"
             ].transform(lambda x: x.rolling(j).mean())
+
+
+def create_pct_change_features(df):
+    grouped = df.groupby(["store_id", "item_id"])
+
+    for i in periods:
+        df[f"sell_price_pct_change_{i}"] = grouped["sell_price"].pct_change(i)
