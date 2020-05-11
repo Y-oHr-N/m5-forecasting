@@ -37,6 +37,8 @@ categorical_features = [
     "event_type_2",
 ]
 
+pct_change_features = [f"sell_price_pct_change_{i}" for i in periods]
+
 numerical_features = (
     [
         "snap_CA",
@@ -50,6 +52,7 @@ numerical_features = (
     + aggregated_features
     + calendar_features
     + lag_features
+    + pct_change_features
 )
 
 features = categorical_features + numerical_features
