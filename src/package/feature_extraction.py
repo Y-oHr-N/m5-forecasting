@@ -1,3 +1,7 @@
+import itertools
+
+import numpy as np
+import pandas as pd
 from workalendar.usa import California
 from workalendar.usa import Texas
 from workalendar.usa import Wisconsin
@@ -7,6 +11,7 @@ from .constants import *
 __all__ = [
     "create_aggregated_features",
     "create_calendar_features",
+    "create_combined_features",
     "create_lag_features",
     "create_pct_change_features",
 ]
@@ -42,6 +47,15 @@ def create_calendar_features(df, col):
         df[f"is_{cal.__class__.__name__.lower()}_holiday"] = df[col].apply(
             cal.is_holiday
         )
+
+
+def create_combined_features(df, cols):
+    func = np.vectorize(lambda x1, x2: "{}*{}".format(x1, x2))
+
+    for col1, col2 in itertools.combinations(cols, 2):
+        values = func(df[col1].values, df[col2].values)
+        codes, _ = pd.factorize(values, sort=True)
+        df[f"{col1}*{col2}"] = codes
 
 
 def create_lag_features(df, col):
