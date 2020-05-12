@@ -18,19 +18,19 @@ def weekofmonth(dt):
     return (dt.day + dt_first.weekday() - 1) // 7
 
 
-def create_aggregated_features(df):
+def create_aggregated_features(df, col):
     grouped = df.groupby(["store_id", "item_id"])
 
     for agg_func in agg_funcs:
-        df[f"sell_price_{agg_func}"] = grouped["sell_price"].transform(agg_func)
+        df[f"{col}_{agg_func}"] = grouped[col].transform(agg_func)
 
 
-def create_calendar_features(df):
-    for col in calendar_features:
-        if col == "weekofmonth":
-            df[col] = df["date"].apply(weekofmonth)
+def create_calendar_features(df, col):
+    for attr in calendar_features:
+        if attr == "weekofmonth":
+            df[attr] = df[col].apply(weekofmonth)
         else:
-            df[col] = getattr(df["date"].dt, col)
+            df[attr] = getattr(df[col].dt, attr)
 
     cals = [
         California(),
@@ -39,25 +39,25 @@ def create_calendar_features(df):
     ]
 
     for cal in cals:
-        df[f"is_{cal.__class__.__name__.lower()}_holiday"] = df["date"].apply(
+        df[f"is_{cal.__class__.__name__.lower()}_holiday"] = df[col].apply(
             cal.is_holiday
         )
 
 
-def create_lag_features(df):
+def create_lag_features(df, col):
     grouped = df.groupby(["store_id", "item_id"])
 
     for i in periods:
-        df[f"demand_shift_{i}"] = grouped["demand"].shift(i)
+        df[f"{col}_shift_{i}"] = grouped[col].shift(i)
 
         for j in windows:
-            df[f"demand_shift_{i}_rolling_{j}_mean"] = grouped[
-                f"demand_shift_{i}"
+            df[f"{col}_shift_{i}_rolling_{j}_mean"] = grouped[
+                f"{col}_shift_{i}"
             ].transform(lambda x: x.rolling(j).mean())
 
 
-def create_pct_change_features(df):
+def create_pct_change_features(df, col):
     grouped = df.groupby(["store_id", "item_id"])
 
     for i in periods:
-        df[f"sell_price_pct_change_{i}"] = grouped["sell_price"].pct_change(i)
+        df[f"{col}_pct_change_{i}"] = grouped[col].pct_change(i)
