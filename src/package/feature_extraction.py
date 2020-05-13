@@ -1,12 +1,12 @@
 import itertools
 
 import numpy as np
-import pandas as pd
 from workalendar.usa import California
 from workalendar.usa import Texas
 from workalendar.usa import Wisconsin
 
 from .constants import *
+from .preprocessing import *
 
 __all__ = [
     "create_aggregated_features",
@@ -54,8 +54,7 @@ def create_combined_features(df, cols):
 
     for col1, col2 in itertools.combinations(cols, 2):
         values = func(df[col1].values, df[col2].values)
-        codes, _ = pd.factorize(values, sort=True)
-        df[f"{col1}*{col2}"] = codes
+        df[f"{col1}*{col2}"] = label_encode(values)
 
 
 def create_lag_features(df, col):
