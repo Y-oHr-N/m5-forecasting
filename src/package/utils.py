@@ -1,7 +1,19 @@
 import numpy as np
 import pandas as pd
 
-__all__ = ["create_weight_12", "reduce_memory_usage"]
+__all__ = ["create_scale", "create_weight_12", "reduce_memory_usage"]
+
+
+def create_scale(df):
+    grouped = df.groupby(["store_id", "item_id"])
+
+    is_not_selled = df["sell_price"].isnull()
+    df["scale"] = grouped["demand"].diff()
+    df.loc[is_not_selled, "scale"] = np.nan
+
+    df["scale"] **= 2
+    df["scale"] = grouped["scale"].transform("mean")
+    df["scale"] = pd.to_numeric(df["scale"], downcast="integer")
 
 
 def create_weight_12(df, start_date="2016-03-28", end_date="2016-04-24"):
