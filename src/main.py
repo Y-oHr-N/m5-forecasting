@@ -16,7 +16,7 @@ work_dir_path.mkdir()
 tasks = [
     "preprocess",
     "engineer",
-    "train",
+    "train_reg",
     "predict",
     "postprocess",
     "submit",
