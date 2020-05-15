@@ -14,12 +14,12 @@ work_dir_path = outputs_dir_path / now.strftime("%Y_%m_%d_%H_%M_%S")
 work_dir_path.mkdir()
 
 tasks = [
-    "preprocessing",
-    "engineering",
-    "training",
-    "predicting",
-    "postprocessing",
-    "submitting",
+    "preprocess",
+    "engineer",
+    "train",
+    "predict",
+    "postprocess",
+    "submit",
 ]
 
 for task in tasks:
