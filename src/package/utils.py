@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 
+from .constants import *
+
 __all__ = [
     "create_scale",
     "create_weight_12",
@@ -10,10 +12,10 @@ __all__ = [
 
 
 def create_scale(df):
-    grouped = df.groupby(["store_id", "item_id"])
+    grouped = df.groupby(by)
 
     is_not_selled = df["sell_price"].isnull()
-    df["scale"] = grouped["demand"].diff()
+    df["scale"] = grouped[target].diff()
     df.loc[is_not_selled, "scale"] = np.nan
 
     df["scale"] **= 2
@@ -22,12 +24,12 @@ def create_scale(df):
 
 
 def create_weight_12(df, start_date="2016-03-28", end_date="2016-04-24"):
-    grouped = df.groupby(["store_id", "item_id"])
+    grouped = df.groupby(by)
 
     is_valid = (df["date"] >= start_date) & (df["date"] <= end_date)
     df["weight_12"] = np.nan
     df.loc[is_valid, "weight_12"] = (
-        df.loc[is_valid, "sell_price"] * df.loc[is_valid, "demand"]
+        df.loc[is_valid, "sell_price"] * df.loc[is_valid, target]
     )
 
     df["weight_12"] = grouped["weight_12"].transform("sum")

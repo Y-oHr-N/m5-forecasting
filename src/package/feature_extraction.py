@@ -24,7 +24,7 @@ def weekofmonth(dt):
 
 
 def create_aggregated_features(df, col):
-    grouped = df.groupby(["store_id", "item_id"])
+    grouped = df.groupby(by)
 
     for agg_func in agg_funcs:
         df[f"{col}_{agg_func}"] = grouped[col].transform(agg_func)
@@ -58,7 +58,7 @@ def create_combined_features(df, cols):
 
 
 def create_lag_features(df, col):
-    grouped = df.groupby(["store_id", "item_id"])
+    grouped = df.groupby(by)
 
     for i in periods:
         df[f"{col}_shift_{i}"] = grouped[col].shift(i)
@@ -70,7 +70,7 @@ def create_lag_features(df, col):
 
 
 def create_pct_change_features(df, col):
-    grouped = df.groupby(["store_id", "item_id"])
+    grouped = df.groupby(by)
 
     for i in periods:
         df[f"{col}_pct_change_{i}"] = grouped[col].pct_change(i)

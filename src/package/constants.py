@@ -1,3 +1,6 @@
+by = ["store_id", "item_id"]
+target = "sales"
+
 agg_funcs = ["min", "max", "mean", "std", "nunique"]
 
 periods = [7, 28]
@@ -21,8 +24,8 @@ calendar_features = [
     # "is_month_start",
     # "is_month_end",
 ]
-lag_features = [f"demand_shift_{i}" for i in periods] + [
-    f"demand_shift_{i}_rolling_{j}_mean" for i in periods for j in windows
+lag_features = [f"{target}_shift_{i}" for i in periods] + [
+    f"{target}_shift_{i}_rolling_{j}_mean" for i in periods for j in windows
 ]
 
 categorical_features = [
