@@ -1,3 +1,7 @@
+train_start_date = "2011-01-29"
+train_end_date = "2016-03-28"
+validation_start_date = "2016-04-24"
+
 by = ["store_id", "item_id"]
 target = "sales"
 
@@ -5,6 +9,7 @@ agg_funcs = ["min", "max", "mean", "std", "nunique"]
 
 periods = [7, 28]
 windows = [7, 28]
+max_lags = max(periods) + max(windows) - 1
 
 aggregated_features = [f"sell_price_{agg_func}" for agg_func in agg_funcs]
 
@@ -24,9 +29,12 @@ calendar_features = [
     # "is_month_start",
     # "is_month_end",
 ]
+
 lag_features = [f"{target}_shift_{i}" for i in periods] + [
     f"{target}_shift_{i}_rolling_{j}_mean" for i in periods for j in windows
 ]
+
+pct_change_features = [f"sell_price_pct_change_{i}" for i in periods]
 
 categorical_features = [
     "store_id",
@@ -37,8 +45,6 @@ categorical_features = [
     "event_name",
     "event_type",
 ]
-
-pct_change_features = [f"sell_price_pct_change_{i}" for i in periods]
 
 numerical_features = (
     [

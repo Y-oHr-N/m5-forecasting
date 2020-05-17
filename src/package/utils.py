@@ -23,7 +23,7 @@ def create_scale(df):
     df["scale"] = pd.to_numeric(df["scale"], downcast="integer")
 
 
-def create_weight_12(df, start_date="2016-03-28", end_date="2016-04-24"):
+def create_weight_12(df, start_date=validation_start_date, end_date=train_end_date):
     grouped = df.groupby(by)
 
     is_valid = (df["date"] >= start_date) & (df["date"] <= end_date)
