@@ -44,12 +44,6 @@ calendar_features = [
     "day",
     "weekofmonth",
     "weekday",
-    # "is_year_start",
-    # "is_year_end",
-    # "is_quarter_start",
-    # "is_quarter_end",
-    # "is_month_start",
-    # "is_month_end",
 ]
 
 lag_features = [f"{target}_shift_{i}" for i in periods] + [
@@ -57,6 +51,11 @@ lag_features = [f"{target}_shift_{i}" for i in periods] + [
 ]
 
 pct_change_features = [f"sell_price_pct_change_{i}" for i in periods]
+
+binary_features = [
+    "snap",
+    "is_holiday",
+]
 
 categorical_features = [
     "store_id",
@@ -69,19 +68,11 @@ categorical_features = [
 ]
 
 numerical_features = (
-    [
-        "snap_CA",
-        "snap_TX",
-        "snap_WI",
-        "sell_price",
-        "is_california_holiday",
-        "is_texas_holiday",
-        "is_wisconsin_holiday",
-    ]
+    ["sell_price"]
     + aggregated_features
     + calendar_features
     + lag_features
     + pct_change_features
 )
 
-features = categorical_features + numerical_features
+features = binary_features + categorical_features + numerical_features

@@ -18,6 +18,7 @@ __all__ = [
     "create_elapsed_days",
     "create_event_name",
     "create_event_type",
+    "create_is_holiday",
     "create_sell_price_ending",
     "create_snap",
 ]
@@ -42,17 +43,6 @@ def create_calendar_features(df, col):
             df[attr] = df[col].apply(weekofmonth)
         else:
             df[attr] = getattr(df[col].dt, attr)
-
-    cals = [
-        California(),
-        Texas(),
-        Wisconsin(),
-    ]
-
-    for cal in cals:
-        df[f"is_{cal.__class__.__name__.lower()}_holiday"] = df[col].apply(
-            cal.is_holiday
-        )
 
 
 def create_combined_features(df, cols):
@@ -115,6 +105,20 @@ def create_event_type(df):
     df["event_type"] = one_hot_decode(event_type_1)
 
     df.drop(columns=["event_type_1", "event_type_2"], inplace=True)
+
+
+def create_is_holiday(df, col):
+    df["is_holiday"] = False
+
+    cals = {
+        "CA": California(),
+        "TX": Texas(),
+        "WI": Wisconsin(),
+    }
+
+    for state_id, cal in cals.items():
+        is_state = df["state_id"] == state_id
+        df.loc[is_state, "is_holiday"] = df.loc[is_state, col].apply(cal.is_holiday)
 
 
 def create_sell_price_ending(df, col):
