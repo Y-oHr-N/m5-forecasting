@@ -14,6 +14,7 @@ __all__ = [
     "create_combined_features",
     "create_lag_features",
     "create_pct_change_features",
+    "create_elapsed_days",
 ]
 
 
@@ -74,3 +75,14 @@ def create_pct_change_features(df, col):
 
     for i in periods:
         df[f"{col}_pct_change_{i}"] = grouped[col].pct_change(i)
+
+
+def create_elapsed_days(df, col):
+    grouped = df.groupby(by)
+
+    is_not_selled = df["sell_price"].isnull()
+    df["elapsed_days"] = df[col]
+    df.loc[is_not_selled, "elapsed_days"] = np.nan
+
+    df["elapsed_days"] = grouped["elapsed_days"].transform("min")
+    df["elapsed_days"] = (df[col] - df["elapsed_days"]).dt.days
