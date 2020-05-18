@@ -19,6 +19,7 @@ __all__ = [
     "create_event_name",
     "create_event_type",
     "create_sell_price_ending",
+    "create_snap",
 ]
 
 
@@ -120,3 +121,13 @@ def create_sell_price_ending(df, col):
     df["sell_price_ending"] = df[col].astype("str")
     df["sell_price_ending"] = df["sell_price_ending"].str[-1]
     df["sell_price_ending"] = df["sell_price_ending"].astype("int")
+
+
+def create_snap(df):
+    for state_id in ["TX", "WI"]:
+        is_state = df["state_id"] == state_id
+        df.loc[is_state, "snap_CA"] = df.loc[is_state, f"snap_{state_id}"]
+
+        df.drop(columns=f"snap_{state_id}", inplace=True)
+
+    df.rename(columns={"snap_CA": "snap"}, inplace=True)
