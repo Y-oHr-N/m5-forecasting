@@ -10,7 +10,7 @@ def label_encode(s):
 
 
 def one_hot_decode(df):
-    df = df.astype(str)
+    df = df.astype("str")
     s = df.apply(lambda s: "".join(s), axis=1)
 
     return label_encode(s)
