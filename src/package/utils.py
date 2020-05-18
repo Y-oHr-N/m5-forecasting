@@ -20,7 +20,6 @@ def create_scale(df):
 
     df["scale"] **= 2
     df["scale"] = grouped["scale"].transform("mean")
-    df["scale"] = pd.to_numeric(df["scale"], downcast="integer")
 
 
 def create_weight_12(df, start_date=validation_start_date, end_date=train_end_date):
@@ -33,7 +32,6 @@ def create_weight_12(df, start_date=validation_start_date, end_date=train_end_da
     )
 
     df["weight_12"] = grouped["weight_12"].transform("sum")
-    df["weight_12"] = pd.to_numeric(df["weight_12"], downcast="integer")
 
 
 def create_sample_weight(df):
