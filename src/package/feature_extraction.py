@@ -1,6 +1,7 @@
 import itertools
 
 import numpy as np
+import pandas as pd
 from workalendar.usa import California
 from workalendar.usa import Texas
 from workalendar.usa import Wisconsin
@@ -15,6 +16,8 @@ __all__ = [
     "create_lag_features",
     "create_pct_change_features",
     "create_elapsed_days",
+    "create_event_name",
+    "create_event_type",
     "create_sell_price_ending",
 ]
 
@@ -87,6 +90,30 @@ def create_elapsed_days(df, col):
 
     df["elapsed_days"] = grouped["elapsed_days"].transform("min")
     df["elapsed_days"] = (df[col] - df["elapsed_days"]).dt.days
+
+
+def create_event_name(df):
+    event_name_1 = pd.get_dummies(df["event_name_1"])
+    event_name_2 = pd.get_dummies(df["event_name_2"])
+
+    for col in event_name_2:
+        event_name_1[col] |= event_name_2[col]
+
+    df["event_name"] = one_hot_decode(event_name_1)
+
+    df.drop(columns=["event_name_1", "event_name_2"], inplace=True)
+
+
+def create_event_type(df):
+    event_type_1 = pd.get_dummies(df["event_type_1"])
+    event_type_2 = pd.get_dummies(df["event_type_2"])
+
+    for col in event_type_2:
+        event_type_1[col] |= event_type_2[col]
+
+    df["event_type"] = one_hot_decode(event_type_1)
+
+    df.drop(columns=["event_type_1", "event_type_2"], inplace=True)
 
 
 def create_sell_price_ending(df, col):
