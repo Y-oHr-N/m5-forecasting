@@ -15,6 +15,7 @@ __all__ = [
     "create_lag_features",
     "create_pct_change_features",
     "create_elapsed_days",
+    "create_sell_price_ending",
 ]
 
 
@@ -86,3 +87,9 @@ def create_elapsed_days(df, col):
 
     df["elapsed_days"] = grouped["elapsed_days"].transform("min")
     df["elapsed_days"] = (df[col] - df["elapsed_days"]).dt.days
+
+
+def create_sell_price_ending(df, col):
+    df["sell_price_ending"] = df[col].astype("str")
+    df["sell_price_ending"] = df["sell_price_ending"].str[-1]
+    df["sell_price_ending"] = df["sell_price_ending"].astype("int")
