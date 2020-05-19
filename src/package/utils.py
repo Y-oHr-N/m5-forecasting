@@ -4,14 +4,12 @@ import pandas as pd
 from .constants import *
 
 __all__ = [
-    "create_scale",
-    "create_weight_12",
     "create_sample_weight",
     "reduce_memory_usage",
 ]
 
 
-def create_scale(df):
+def compute_scale(df):
     grouped = df.groupby(by)
 
     is_not_selled = df["sell_price"].isnull()
@@ -19,10 +17,11 @@ def create_scale(df):
     df.loc[is_not_selled, "scale"] = np.nan
 
     df["scale"] **= 2
-    df["scale"] = grouped["scale"].transform("mean")
+
+    return grouped["scale"].mean()
 
 
-def create_weight_12(df, start_date=validation_start_date, end_date=train_end_date):
+def compute_weight_12(df, start_date=validation_start_date, end_date=train_end_date):
     grouped = df.groupby(by)
 
     is_valid = (df["date"] >= start_date) & (df["date"] <= end_date)
@@ -31,16 +30,28 @@ def create_weight_12(df, start_date=validation_start_date, end_date=train_end_da
         df.loc[is_valid, "sell_price"] * df.loc[is_valid, target]
     )
 
-    df["weight_12"] = grouped["weight_12"].transform("sum")
+    weight_12 = grouped["weight_12"].sum()
+    weight_12 /= weight_12.sum()
+
+    return weight_12
+
+
+def compute_scaled_weight_12(df):
+    scale = compute_scale(df)
+    weight_12 = compute_weight_12(df)
+    weight_12 /= np.sqrt(scale)
+
+    weight_12.rename("scaled_weight_12", inplace=True)
+
+    return weight_12
 
 
 def create_sample_weight(df):
-    create_scale(df)
-    create_weight_12(df)
+    scaled_weight_12 = compute_scaled_weight_12(df)
+    scaled_weight_12 **= 2
+    scaled_weight_12 = df[by].merge(scaled_weight_12, on=by)
 
-    df["sample_weight"] = df["weight_12"] ** 2 / df["scale"]
-
-    df.drop(columns=["scale", "weight_12"], inplace=True)
+    df["sample_weight"] = scaled_weight_12["scaled_weight_12"]
 
 
 def reduce_memory_usage(df):
