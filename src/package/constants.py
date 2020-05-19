@@ -21,8 +21,8 @@ dtype = {
 parse_dates = ["date"]
 
 train_start_date = "2011-01-29"
-train_end_date = "2016-03-28"
-validation_start_date = "2016-04-24"
+train_end_date = "2016-04-24"
+validation_start_date = "2016-03-28"
 
 by = ["store_id", "item_id"]
 target = "sales"
