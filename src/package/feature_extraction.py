@@ -93,9 +93,10 @@ def create_event_name(df):
     for col in event_name_2:
         event_name_1[col] |= event_name_2[col]
 
-    df["event_name"] = one_hot_decode(event_name_1)
+    df["event_name_1"] = one_hot_decode(event_name_1)
 
-    df.drop(columns=["event_name_1", "event_name_2"], inplace=True)
+    df.rename(columns={"event_name_1": "event_name"}, inplace=True)
+    df.drop(columns="event_name_2", inplace=True)
 
 
 def create_event_type(df):
@@ -105,9 +106,10 @@ def create_event_type(df):
     for col in event_type_2:
         event_type_1[col] |= event_type_2[col]
 
-    df["event_type"] = one_hot_decode(event_type_1)
+    df["event_type_1"] = one_hot_decode(event_type_1)
 
-    df.drop(columns=["event_type_1", "event_type_2"], inplace=True)
+    df.rename(columns={"event_type_1": "event_type"}, inplace=True)
+    df.drop(columns="event_type_2", inplace=True)
 
 
 def create_is_holiday(df, col):
