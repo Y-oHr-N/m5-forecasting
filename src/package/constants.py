@@ -28,7 +28,7 @@ by = ["store_id", "item_id"]
 target = "sales"
 
 agg_funcs = ["min", "max", "mean", "std", "nunique"]
-agg_funcs_for_rolling = ["mean"]
+agg_funcs_for_rolling = ["mean", "std"]
 
 periods = [7, 28]
 windows = [7, 28]
