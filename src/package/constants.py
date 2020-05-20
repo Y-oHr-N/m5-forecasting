@@ -28,6 +28,7 @@ by = ["store_id", "item_id"]
 target = "sales"
 
 agg_funcs = ["min", "max", "mean", "std", "nunique"]
+agg_funcs_for_rolling = ["mean"]
 
 periods = [7, 28]
 windows = [7, 28]
@@ -47,7 +48,10 @@ calendar_features = [
 ]
 
 lag_features = [f"{target}_shift_{i}" for i in periods] + [
-    f"{target}_shift_{i}_rolling_{j}_mean" for i in periods for j in windows
+    f"{target}_shift_{i}_rolling_{j}_{agg_func}"
+    for i in periods
+    for j in windows
+    for agg_func in agg_funcs_for_rolling
 ]
 
 pct_change_features = [f"sell_price_pct_change_{i}" for i in periods]
