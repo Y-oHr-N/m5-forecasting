@@ -10,11 +10,13 @@ from .constants import *
 from .preprocessing import *
 
 __all__ = [
+    # Functions for general features
     "create_aggregated_features",
     "create_calendar_features",
     "create_combined_features",
     "create_lag_features",
     "create_pct_change_features",
+    # Functions for specific features
     "create_elapsed_days",
     "create_event_name",
     "create_event_type",
