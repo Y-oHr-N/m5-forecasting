@@ -20,6 +20,9 @@ dtype = {
 
 parse_dates = ["date"]
 
+train_days = 1913
+test_days = 28
+
 train_start_date = "2011-01-29"
 train_end_date = "2016-04-24"
 validation_start_date = "2016-03-28"
