@@ -65,7 +65,7 @@ def create_lag_features(df, col):
             for agg_func in agg_funcs_for_rolling:
                 df[f"{col}_shift_{i}_rolling_{j}_{agg_func}"] = grouped[
                     f"{col}_shift_{i}"
-                ].transform(lambda x: x.rolling(j).mean())
+                ].apply(lambda s: s.rolling(j).mean())
 
 
 def create_pct_change_features(df, col):
