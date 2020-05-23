@@ -15,6 +15,7 @@ __all__ = [
     "create_calendar_features",
     "create_combined_features",
     "create_lag_features",
+    "create_encoded_features",
     "create_pct_change_features",
     # Functions for specific features
     "create_elapsed_days",
@@ -66,6 +67,15 @@ def create_lag_features(df, col):
                 df[f"{col}_shift_{i}_rolling_{j}_{agg_func}"] = grouped[
                     f"{col}_shift_{i}"
                 ].apply(lambda s: s.rolling(j).aggregate(agg_func))
+
+
+def create_encoded_features(df, cols):
+    for col in cols:
+        grouped = df.groupby(col)
+        df[f"encoded_{col}"] = grouped[target].cumsum() / (
+            grouped[target].cumcount() + 1
+        )
+        df[f"encoded_{col}"] = grouped[f"encoded_{col}"].ffill()
 
 
 def create_pct_change_features(df, col):
