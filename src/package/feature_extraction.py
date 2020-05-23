@@ -80,11 +80,12 @@ def create_encoded_features(df, cols):
         df[f"encoded_{col}"] = grouped[f"encoded_{col}"].ffill()
 
 
-def create_pct_change_features(df, col):
+def create_pct_change_features(df, cols, periods):
     grouped = df.groupby(by)
 
-    for i in periods:
-        df[f"{col}_pct_change_{i}"] = grouped[col].pct_change(i)
+    for col in cols:
+        for i in periods:
+            df[f"{col}_pct_change_{i}"] = grouped[col].pct_change(i)
 
 
 def create_scaled_features(df, cols):
