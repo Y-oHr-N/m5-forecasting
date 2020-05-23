@@ -34,11 +34,12 @@ def weekofmonth(dt):
     return (dt.day + dt_first.weekday() - 1) // 7
 
 
-def create_aggregated_features(df, col):
+def create_aggregated_features(df, cols):
     grouped = df.groupby(by)
 
-    for agg_func in agg_funcs:
-        df[f"{col}_{agg_func}"] = grouped[col].transform(agg_func)
+    for col in cols:
+        for agg_func in agg_funcs:
+            df[f"{col}_{agg_func}"] = grouped[col].transform(agg_func)
 
 
 def create_calendar_features(df, col):
