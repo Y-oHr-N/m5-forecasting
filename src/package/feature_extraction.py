@@ -14,9 +14,10 @@ __all__ = [
     "create_aggregated_features",
     "create_calendar_features",
     "create_combined_features",
-    "create_lag_features",
     "create_encoded_features",
     "create_pct_change_features",
+    "create_rolling_features",
+    "create_shift_features",
     "create_scaled_features",
     # Functions for specific features
     "create_elapsed_days",
@@ -58,19 +59,6 @@ def create_combined_features(df, cols):
         df[f"{col1}*{col2}"] = label_encode(values)
 
 
-def create_lag_features(df, col):
-    grouped = df.groupby(by)
-
-    for i in periods:
-        df[f"{col}_shift_{i}"] = grouped[col].shift(i)
-
-        for j in windows:
-            for agg_func in agg_funcs_for_rolling:
-                df[f"{col}_shift_{i}_rolling_{j}_{agg_func}"] = grouped[
-                    f"{col}_shift_{i}"
-                ].apply(lambda s: s.rolling(j).aggregate(agg_func))
-
-
 def create_encoded_features(df, cols):
     for col in cols:
         grouped = df.groupby(col)
@@ -88,11 +76,29 @@ def create_pct_change_features(df, cols, periods):
             df[f"{col}_pct_change_{i}"] = grouped[col].pct_change(i)
 
 
+def create_rolling_features(df, cols, windows):
+    grouped = df.groupby(by)
+
+    for col in cols:
+        for j in windows:
+            for agg_func in agg_funcs_for_rolling:
+                df[f"{col}_rolling_{j}_{agg_func}"] = grouped[col].apply(
+                    lambda s: s.rolling(j).aggregate(agg_func)
+                )
+
+
 def create_scaled_features(df, cols):
     grouped = df.groupby(by)
 
     for col in cols:
         df[f"scaled_{col}"] = df[col] / grouped[col].transform("max")
+
+
+def create_shift_features(df, cols, periods):
+    for col in cols:
+        for i in periods:
+            grouped = df.groupby(by)
+            df[f"{col}_shift_{i}"] = grouped[col].shift(i)
 
 
 def create_elapsed_days(df):
