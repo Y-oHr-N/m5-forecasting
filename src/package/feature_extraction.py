@@ -17,6 +17,7 @@ __all__ = [
     "create_lag_features",
     "create_encoded_features",
     "create_pct_change_features",
+    "create_scaled_features",
     # Functions for specific features
     "create_elapsed_days",
     "create_event_name",
@@ -83,6 +84,13 @@ def create_pct_change_features(df, col):
 
     for i in periods:
         df[f"{col}_pct_change_{i}"] = grouped[col].pct_change(i)
+
+
+def create_scaled_features(df, cols):
+    grouped = df.groupby(by)
+
+    for col in cols:
+        df[f"scaled_{col}"] = df[col] / grouped[col].transform("max")
 
 
 def create_elapsed_days(df):
