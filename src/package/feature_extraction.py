@@ -75,15 +75,15 @@ def create_pct_change_features(df, col):
         df[f"{col}_pct_change_{i}"] = grouped[col].pct_change(i)
 
 
-def create_elapsed_days(df, col):
+def create_elapsed_days(df):
     grouped = df.groupby(by)
 
     is_not_selled = df["sell_price"].isnull()
-    df["elapsed_days"] = df[col]
+    df["elapsed_days"] = df["date"]
     df.loc[is_not_selled, "elapsed_days"] = np.nan
 
     df["elapsed_days"] = grouped["elapsed_days"].transform("min")
-    df["elapsed_days"] = (df[col] - df["elapsed_days"]).dt.days
+    df["elapsed_days"] = (df["date"] - df["elapsed_days"]).dt.days
 
 
 def create_event_name(df):
@@ -112,7 +112,7 @@ def create_event_type(df):
     df.drop(columns="event_type_2", inplace=True)
 
 
-def create_is_holiday(df, col):
+def create_is_holiday(df):
     df["is_holiday"] = False
 
     cals = {
@@ -123,11 +123,11 @@ def create_is_holiday(df, col):
 
     for state_id, cal in cals.items():
         is_state = df["state_id"] == state_id
-        df.loc[is_state, "is_holiday"] = df.loc[is_state, col].apply(cal.is_holiday)
+        df.loc[is_state, "is_holiday"] = df.loc[is_state, "date"].apply(cal.is_holiday)
 
 
-def create_sell_price_ending(df, col):
-    df["sell_price_ending"] = df[col].astype("str")
+def create_sell_price_ending(df):
+    df["sell_price_ending"] = df["sell_price"].astype("str")
     df["sell_price_ending"] = df["sell_price_ending"].str[-1]
     df["sell_price_ending"] = df["sell_price_ending"].astype("int")
 
