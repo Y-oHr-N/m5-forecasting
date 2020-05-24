@@ -1,7 +1,14 @@
 import datetime
 import pathlib
+import sys
 
 import papermill as pm
+
+# See https://github.com/jupyter/notebook/issues/4613#issuecomment-548992047
+if sys.platform == "win32":
+    import asyncio
+
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 now = datetime.datetime.now()
 
