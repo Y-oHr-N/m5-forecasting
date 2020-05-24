@@ -17,7 +17,6 @@ tasks = [
     "preprocess",
     "train_reg",
     "predict",
-    "postprocess",
     "submit",
 ]
 
