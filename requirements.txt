@@ -6,5 +6,6 @@ numpy
 pandas
 papermill
 pyarrow
+scikit-learn>=0.23
 tqdm
 workalendar
