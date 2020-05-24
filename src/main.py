@@ -22,7 +22,7 @@ work_dir_path.mkdir()
 
 tasks = [
     "preprocess",
-    "train_reg",
+    "train_lgbm_reg",
     "predict",
     "submit",
 ]

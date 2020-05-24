@@ -1,3 +1,4 @@
+catboost
 joblib
 kaggle
 lightgbm
