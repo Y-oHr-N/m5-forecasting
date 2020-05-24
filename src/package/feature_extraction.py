@@ -55,8 +55,7 @@ def create_combined_features(df, cols):
     func = np.vectorize(lambda x1, x2: "{}*{}".format(x1, x2))
 
     for col1, col2 in itertools.combinations(cols, 2):
-        values = func(df[col1].values, df[col2].values)
-        df[f"{col1}*{col2}"] = label_encode(values)
+        df[f"{col1}*{col2}"] = func(df[col1].values, df[col2].values)
 
 
 def create_encoded_features(df, cols):
