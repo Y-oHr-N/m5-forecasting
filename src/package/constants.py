@@ -78,7 +78,6 @@ rolling_features = [
 
 shift_features_batch = [f"{target}_shift_{i}" for i in periods_batch]
 shift_features_online = [f"{target}_shift_{i}" for i in periods_online]
-shift_features = shift_features_online + shift_features_batch
 
 numerical_features = (
     ["sell_price"]
@@ -86,7 +85,10 @@ numerical_features = (
     + calendar_features
     + pct_change_features
     + rolling_features
-    + shift_features
+    + shift_features_online
+    + shift_features_batch
 )
 
 features = binary_features + categorical_features + numerical_features
+
+random_state = 0
