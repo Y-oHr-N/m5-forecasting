@@ -70,6 +70,7 @@ nba_finals_dates = [
 ]
 
 agg_funcs = ["min", "max", "mean", "std", "nunique"]
+agg_funcs_for_expanding = ["min", "max", "mean", "std"]
 agg_funcs_for_rolling = ["mean", "std"]
 
 periods_batch = [28]

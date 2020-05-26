@@ -14,6 +14,7 @@ __all__ = [
     "create_calendar_features",
     "create_combined_features",
     "create_encoded_features",
+    "create_expanding_features",
     "create_pct_change_features",
     "create_rolling_features",
     "create_shift_features",
@@ -64,6 +65,23 @@ def create_encoded_features(df, cols):
             grouped[target].cumcount() + 1
         )
         df[f"encoded_{col}"] = grouped[f"encoded_{col}"].ffill()
+
+
+def create_expanding_features(df, cols):
+    grouped = df.groupby(by)
+
+    for col in cols:
+        for agg_func in agg_funcs_for_expanding:
+            if agg_func == "min":
+                df[f"{col}_expanding_{agg_func}"] = grouped[col].cummin()
+            elif agg_func == "max":
+                df[f"{col}_expanding_{agg_func}"] = grouped[col].cummax()
+            else:
+                feature = grouped[col].expanding().aggregate(agg_func)
+
+                feature.sort_index(level=-1, inplace=True)
+
+                df[f"{col}_expanding_{agg_func}"] = feature.values
 
 
 def create_pct_change_features(df, cols, periods):
