@@ -108,6 +108,8 @@ calendar_features = [
     "weekday",
 ]
 
+expanding_features = [f"sell_price_expanding_{agg_func}" for agg_func in agg_funcs_for_expanding]
+
 pct_change_features = [f"sell_price_pct_change_{i}" for i in periods]
 
 rolling_features = [
@@ -117,15 +119,18 @@ rolling_features = [
     for agg_func in agg_funcs_for_rolling
 ]
 
+scaled_features = ["scaled_sell_price"]
+
 shift_features_batch = [f"{target}_shift_{i}" for i in periods_batch]
 shift_features_online = [f"{target}_shift_{i}" for i in periods_online]
 
 numerical_features = (
     ["sell_price"]
-    + aggregated_features
     + calendar_features
+    + expanding_features
     + pct_change_features
     + rolling_features
+    + scaled_features
     + shift_features_online
     + shift_features_batch
 )
