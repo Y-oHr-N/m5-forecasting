@@ -177,6 +177,11 @@ def create_event_name(df):
     for col in event_name_2:
         event_name_1[col] |= event_name_2[col]
 
+    # See https://stackoverflow.com/questions/39638403/valueerror-cannot-use-inplace-with-categoricalindex
+    # event_name_1.columns = event_name_1.columns.add_categories("NBAFinals")
+
+    # event_name_1["NBAFinals"] = df["date"].isin(nba_finals_dates)
+
     event_name_1 = event_name_1.astype("str")
     df["event_name_1"] = event_name_1.apply(lambda s: "".join(s), axis=1)
 
@@ -190,6 +195,9 @@ def create_event_type(df):
 
     for col in event_type_2:
         event_type_1[col] |= event_type_2[col]
+
+    # is_nba_finals = df["date"].isin(nba_finals_dates)
+    # event_type_1.loc[is_nba_finals, "Sporting"] = 1
 
     event_type_1 = event_type_1.astype("str")
     df["event_type_1"] = event_type_1.apply(lambda s: "".join(s), axis=1)
