@@ -14,6 +14,7 @@ __all__ = [
     "create_calendar_features",
     "create_combined_features",
     "create_encoded_features",
+    "create_ewm_features",
     "create_expanding_features",
     "create_pct_change_features",
     "create_rolling_features",
@@ -87,6 +88,17 @@ def create_encoded_features(df, cols):
             grouped[target].cumcount() + 1
         )
         df[f"encoded_{col}"] = grouped[f"encoded_{col}"].ffill()
+
+
+def create_ewm_features(df, cols, windows):
+    grouped = df.groupby(by)
+
+    for col in cols:
+        for j in windows:
+            for agg_func in agg_funcs_for_ewm:
+                df[f"{col}_ewm_{j}_{agg_func}"] = grouped[col].apply(
+                    lambda s: s.ewm(span=j).aggregate(agg_func)
+                )
 
 
 def create_expanding_features(df, cols):
