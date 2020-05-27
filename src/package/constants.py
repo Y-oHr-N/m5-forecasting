@@ -29,6 +29,7 @@ validation_start_date = "2016-03-28"
 
 by = ["store_id", "item_id"]
 target = "sales"
+transformed_target = "dollar_sales"
 
 nba_finals_dates = [
     "2011-05-31",
