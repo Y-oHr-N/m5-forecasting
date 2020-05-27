@@ -27,10 +27,6 @@ train_start_date = "2011-01-29"
 train_end_date = "2016-04-24"
 validation_start_date = "2016-03-28"
 
-by = ["store_id", "item_id"]
-target = "sales"
-transformed_target = "dollar_sales"
-
 nba_finals_dates = [
     "2011-05-31",
     "2011-06-02",
@@ -70,6 +66,10 @@ nba_finals_dates = [
     "2016-06-19",
 ]
 
+by = ["store_id", "item_id"]
+target = "sales"
+transformed_target = "dollar_sales"
+
 agg_funcs = ["min", "max", "mean", "std", "nunique"]
 agg_funcs_for_expanding = ["min", "max", "mean", "std"]
 agg_funcs_for_rolling = ["mean", "std"]
@@ -108,21 +108,24 @@ calendar_features = [
     "weekday",
 ]
 
-expanding_features = [f"sell_price_expanding_{agg_func}" for agg_func in agg_funcs_for_expanding]
+expanding_features = [
+    f"sell_price_expanding_{agg_func}" for agg_func in agg_funcs_for_expanding
+]
 
 pct_change_features = [f"sell_price_pct_change_{i}" for i in periods]
-
-rolling_features = [
-    f"{target}_shift_{i}_rolling_{j}_{agg_func}"
-    for i in periods
-    for j in windows
-    for agg_func in agg_funcs_for_rolling
-]
 
 scaled_features = ["scaled_sell_price"]
 
 shift_features_batch = [f"{target}_shift_{i}" for i in periods_batch]
 shift_features_online = [f"{target}_shift_{i}" for i in periods_online]
+shift_features = shift_features_online + shift_features_batch
+
+rolling_features = [
+    f"{shift_feature}_rolling_{j}_{agg_func}"
+    for shift_feature in shift_features
+    for j in windows
+    for agg_func in agg_funcs_for_rolling
+]
 
 numerical_features = (
     ["sell_price"]
