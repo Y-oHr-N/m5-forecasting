@@ -20,6 +20,7 @@ __all__ = [
     "create_shift_features",
     "create_scaled_features",
     # Functions for specific features
+    "create_countdown_features",
     "create_elapsed_days",
     "create_event_name",
     "create_event_type",
@@ -33,6 +34,27 @@ def weekofmonth(dt):
     dt_first = dt.replace(day=1)
 
     return (dt.day + dt_first.weekday() - 1) // 7
+
+
+def days_until_event(s, high=28):
+    if isinstance(s, pd.Series):
+        s = s.values
+
+    (n,) = s.shape
+    out = np.empty(n, dtype="int")
+    state = high
+
+    for i, elm in enumerate(s[::-1]):
+        if elm:
+            state = 0
+        else:
+            state += 1
+
+        out[n - i - 1] = state
+
+    np.clip(out, 0, high, out=out)
+
+    return out
 
 
 def create_aggregated_features(df, cols):
@@ -115,6 +137,26 @@ def create_shift_features(df, cols, periods):
         for i in periods:
             grouped = df.groupby(by)
             df[f"{col}_shift_{i}"] = grouped[col].shift(i)
+
+
+def create_countdown_features(df):
+    event_name_1 = pd.get_dummies(df["event_name_1"])
+    event_name_2 = pd.get_dummies(df["event_name_2"])
+
+    for col in event_name_2:
+        event_name_1[col] |= event_name_2[col]
+
+    event_name_1 = event_name_1.apply(days_until_event)
+
+    event_name_1.rename(columns="days_until_{}".format, inplace=True)
+
+    for col in event_name_1:
+        df[col] = event_name_1[col]
+
+    df.drop(
+        columns=["event_name_1", "event_name_2", "event_type_1", "event_type_2"],
+        inplace=True,
+    )
 
 
 def create_elapsed_days(df):
