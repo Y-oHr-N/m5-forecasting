@@ -21,8 +21,8 @@ __all__ = [
     "create_shift_features",
     "create_scaled_features",
     # Functions for specific features
+    "create_days_since_release",
     "create_days_until_event",
-    "create_elapsed_days",
     "create_event_name",
     "create_event_type",
     "create_is_weekend",
@@ -147,20 +147,20 @@ def create_shift_features(df, cols, periods):
             df[f"{col}_shift_{i}"] = grouped[col].shift(i)
 
 
-def create_days_until_event(df):
-    is_event = df["event_name_1"].notnull()
-    df["days_until_event"] = days_until_one_day(is_event)
-
-
-def create_elapsed_days(df):
+def create_days_since_release(df):
     grouped = df.groupby(by)
 
     is_not_selled = df["sell_price"].isnull()
-    df["elapsed_days"] = df["date"]
-    df.loc[is_not_selled, "elapsed_days"] = np.nan
+    df["days_since_release"] = df["date"]
+    df.loc[is_not_selled, "days_since_release"] = np.nan
 
-    df["elapsed_days"] = grouped["elapsed_days"].transform("min")
-    df["elapsed_days"] = (df["date"] - df["elapsed_days"]).dt.days
+    df["days_since_release"] = grouped["days_since_release"].transform("min")
+    df["days_since_release"] = (df["date"] - df["days_since_release"]).dt.days
+
+
+def create_days_until_event(df):
+    is_event = df["event_name_1"].notnull()
+    df["days_until_event"] = days_until_one_day(is_event)
 
 
 def create_event_name(df):
