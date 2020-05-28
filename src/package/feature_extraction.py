@@ -39,21 +39,17 @@ def weekofmonth(dt):
     return (dt.day + dt_first.weekday() - 1) // 7
 
 
-def days_until_event(s):
-    if isinstance(s, pd.Series):
-        s = s.values
-
-    (n,) = s.shape
-    out = np.empty(n, dtype="int")
+def days_until_one_day(s):
+    out = np.empty_like(s, dtype="float32")
     state = np.nan
 
-    for i, elm in enumerate(s[::-1]):
+    for i, elm in enumerate(s.iloc[::-1]):
         if elm:
             state = 0
         else:
             state += 1
 
-        out[n - i - 1] = state
+        out[-i - 1] = state
 
     return out
 
@@ -153,7 +149,7 @@ def create_shift_features(df, cols, periods):
 
 def create_days_until_event(df):
     is_event = df["event_name_1"].notnull()
-    df["days_until_event"] = days_until_event(is_event)
+    df["days_until_event"] = days_until_one_day(is_event)
 
 
 def create_elapsed_days(df):
