@@ -83,7 +83,7 @@ max_lags = max(periods_online) + max(windows) - 1
 
 binary_features = [
     "snap",
-    "is_holiday",
+    "is_weekend",
 ]
 
 categorical_features = [

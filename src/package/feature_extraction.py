@@ -25,7 +25,7 @@ __all__ = [
     "create_elapsed_days",
     "create_event_name",
     "create_event_type",
-    "create_is_holiday",
+    "create_is_weekend",
     "create_nearest_event_name",
     "create_nearest_event_type",
     "create_sell_price_ending",
@@ -193,8 +193,8 @@ def create_event_type(df):
     df["event_type"] = event_type_1.apply(lambda s: "".join(s), axis=1)
 
 
-def create_is_holiday(df):
-    df["is_holiday"] = False
+def create_is_weekend(df):
+    df["is_weekend"] = False
 
     cals = {
         "CA": California(),
@@ -204,7 +204,9 @@ def create_is_holiday(df):
 
     for state_id, cal in cals.items():
         is_state = df["state_id"] == state_id
-        df.loc[is_state, "is_holiday"] = df.loc[is_state, "date"].apply(cal.is_holiday)
+        df.loc[is_state, "is_weekend"] = ~df.loc[is_state, "date"].apply(
+            cal.is_working_day
+        )
 
 
 def create_nearest_event_name(df):
