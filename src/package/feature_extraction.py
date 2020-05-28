@@ -165,11 +165,6 @@ def create_countdown_features(df):
     for col in event_name_1:
         df[col] = event_name_1[col]
 
-    df.drop(
-        columns=["event_name_1", "event_name_2", "event_type_1", "event_type_2"],
-        inplace=True,
-    )
-
 
 def create_elapsed_days(df):
     grouped = df.groupby(by)
@@ -195,10 +190,7 @@ def create_event_name(df):
     # event_name_1["NBAFinals"] = df["date"].isin(nba_finals_dates)
 
     event_name_1 = event_name_1.astype("str")
-    df["event_name_1"] = event_name_1.apply(lambda s: "".join(s), axis=1)
-
-    df.rename(columns={"event_name_1": "event_name"}, inplace=True)
-    df.drop(columns="event_name_2", inplace=True)
+    df["event_name"] = event_name_1.apply(lambda s: "".join(s), axis=1)
 
 
 def create_event_type(df):
@@ -212,10 +204,7 @@ def create_event_type(df):
     # event_type_1.loc[is_nba_finals, "Sporting"] = 1
 
     event_type_1 = event_type_1.astype("str")
-    df["event_type_1"] = event_type_1.apply(lambda s: "".join(s), axis=1)
-
-    df.rename(columns={"event_type_1": "event_type"}, inplace=True)
-    df.drop(columns="event_type_2", inplace=True)
+    df["event_type"] = event_type_1.apply(lambda s: "".join(s), axis=1)
 
 
 def create_is_holiday(df):
@@ -239,10 +228,8 @@ def create_sell_price_ending(df):
 
 
 def create_snap(df):
+    df["snap"] = False
+
     for state_id in ["TX", "WI"]:
         is_state = df["state_id"] == state_id
-        df.loc[is_state, "snap_CA"] = df.loc[is_state, f"snap_{state_id}"]
-
-        df.drop(columns=f"snap_{state_id}", inplace=True)
-
-    df.rename(columns={"snap_CA": "snap"}, inplace=True)
+        df.loc[is_state, "snap"] = df.loc[is_state, f"snap_{state_id}"]
