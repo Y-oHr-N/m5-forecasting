@@ -23,6 +23,7 @@ __all__ = [
     # Functions for specific features
     "create_days_since_release",
     "create_days_until_event",
+    "create_days_until_weekend",
     "create_event_name",
     "create_event_type",
     "create_is_weekend",
@@ -161,6 +162,31 @@ def create_days_since_release(df):
 def create_days_until_event(df):
     is_event = df["event_name_1"].notnull()
     df["days_until_event"] = days_until_one_day(is_event)
+
+
+def create_days_until_weekend(df):
+    tmp = df["date"].unique()
+    tmp = pd.DataFrame(index=tmp)
+
+    cals = {
+        "CA": California(),
+        "TX": Texas(),
+        "WI": Wisconsin(),
+    }
+
+    for state_id, cal in cals.items():
+        tmp[state_id] = tmp.index.map(cal.is_working_day)
+        tmp[state_id] = tmp[state_id].astype("bool")
+        tmp[state_id] = days_until_one_day(~tmp[state_id])
+
+    tmp = tmp.stack()
+    on = ["date", "state_id"]
+
+    tmp.index.rename(on, inplace=True)
+    tmp.rename("days_until_weekend", inplace=True)
+
+    tmp = df[on].merge(tmp, copy=False, on=on)
+    df["days_until_weekend"] = tmp["days_until_weekend"]
 
 
 def create_event_name(df):
