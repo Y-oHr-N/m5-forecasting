@@ -21,11 +21,13 @@ __all__ = [
     "create_shift_features",
     "create_scaled_features",
     # Functions for specific features
-    "create_countdown_features",
+    "create_days_until_event",
     "create_elapsed_days",
     "create_event_name",
     "create_event_type",
     "create_is_holiday",
+    "create_nearest_event_name",
+    "create_nearest_event_type",
     "create_sell_price_ending",
     "create_snap",
 ]
@@ -37,13 +39,13 @@ def weekofmonth(dt):
     return (dt.day + dt_first.weekday() - 1) // 7
 
 
-def days_until_event(s, high=28):
+def days_until_event(s):
     if isinstance(s, pd.Series):
         s = s.values
 
     (n,) = s.shape
     out = np.empty(n, dtype="int")
-    state = high
+    state = np.nan
 
     for i, elm in enumerate(s[::-1]):
         if elm:
@@ -52,8 +54,6 @@ def days_until_event(s, high=28):
             state += 1
 
         out[n - i - 1] = state
-
-    np.clip(out, 0, high, out=out)
 
     return out
 
@@ -151,19 +151,9 @@ def create_shift_features(df, cols, periods):
             df[f"{col}_shift_{i}"] = grouped[col].shift(i)
 
 
-def create_countdown_features(df):
-    event_name_1 = pd.get_dummies(df["event_name_1"])
-    event_name_2 = pd.get_dummies(df["event_name_2"])
-
-    for col in event_name_2:
-        event_name_1[col] |= event_name_2[col]
-
-    event_name_1 = event_name_1.apply(days_until_event)
-
-    event_name_1.rename(columns="days_until_{}".format, inplace=True)
-
-    for col in event_name_1:
-        df[col] = event_name_1[col]
+def create_days_until_event(df):
+    is_event = df["event_name_1"].notnull()
+    df["days_until_event"] = days_until_event(is_event)
 
 
 def create_elapsed_days(df):
@@ -219,6 +209,14 @@ def create_is_holiday(df):
     for state_id, cal in cals.items():
         is_state = df["state_id"] == state_id
         df.loc[is_state, "is_holiday"] = df.loc[is_state, "date"].apply(cal.is_holiday)
+
+
+def create_nearest_event_name(df):
+    df["nearest_event_name"] = df["event_name_1"].bfill()
+
+
+def create_nearest_event_type(df):
+    df["nearest_event_type"] = df["event_type_1"].bfill()
 
 
 def create_sell_price_ending(df):
