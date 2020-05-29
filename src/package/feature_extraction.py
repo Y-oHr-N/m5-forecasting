@@ -13,6 +13,7 @@ __all__ = [
     "create_aggregated_features",
     "create_calendar_features",
     "create_combined_features",
+    "create_count_consecutive_zero_features",
     "create_encoded_features",
     "create_ewm_features",
     "create_expanding_features",
@@ -38,6 +39,24 @@ def weekofmonth(dt):
     dt_first = dt.replace(day=1)
 
     return (dt.day + dt_first.weekday() - 1) // 7
+
+
+def count_consecutive_zero(s):
+    out = np.full_like(s, np.nan, dtype="float32")
+    state = np.nan
+
+    for i, elm in enumerate(s):
+        if np.isnan(elm):
+            continue
+
+        if elm:
+            state = 0
+        else:
+            state += 1
+
+        out[i] = state
+
+    return out
 
 
 def days_until_one_day(s):
@@ -76,6 +95,15 @@ def create_combined_features(df, cols):
 
     for col1, col2 in itertools.combinations(cols, 2):
         df[f"{col1}*{col2}"] = func(df[col1].values, df[col2].values)
+
+
+def create_count_consecutive_zero_features(df, cols):
+    grouped = df.groupby(by)
+
+    for col in cols:
+        df[f"{col}_count_consecutive_zero"] = grouped[col].transform(
+            count_consecutive_zero
+        )
 
 
 def create_encoded_features(df, cols):
