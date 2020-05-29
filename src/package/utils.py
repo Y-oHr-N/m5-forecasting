@@ -46,13 +46,13 @@ def compute_scaled_weight_12(df):
     return weight_12
 
 
-def create_sample_weight(df):
+def create_sample_weight(df, denom=1):
     date_min = df["date"].min()
     date_max = df["date"].max()
-    span = (date_max - date_min).days + 1
+    span = (date_max - date_min).days // denom + 1
+    elapsed_time = (df["date"] - date_min).dt.days // denom
     alpha = 2 / (span + 1)
-    elapsed_days = (df["date"] - date_min).dt.days
-    df["sample_weight"] = (1 - alpha) ** (span - elapsed_days - 1)
+    df["sample_weight"] = (1 - alpha) ** (span - elapsed_time - 1)
 
 
 def reduce_memory_usage(df):
