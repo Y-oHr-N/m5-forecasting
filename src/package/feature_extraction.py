@@ -26,7 +26,7 @@ __all__ = [
     "create_days_until_weekend",
     "create_event_name",
     "create_event_type",
-    "create_is_weekend",
+    "create_is_working_day",
     "create_nearest_event_name",
     "create_nearest_event_type",
     "create_sell_price_ending",
@@ -219,8 +219,9 @@ def create_event_type(df):
     df["event_type"] = event_type_1.apply(lambda s: "".join(s), axis=1)
 
 
-def create_is_weekend(df):
-    df["is_weekend"] = False
+def create_is_working_day(df):
+    tmp = df["date"].unique()
+    tmp = pd.DataFrame(index=tmp)
 
     cals = {
         "CA": California(),
@@ -229,10 +230,17 @@ def create_is_weekend(df):
     }
 
     for state_id, cal in cals.items():
-        is_state = df["state_id"] == state_id
-        df.loc[is_state, "is_weekend"] = ~df.loc[is_state, "date"].apply(
-            cal.is_working_day
-        )
+        tmp[state_id] = tmp.index.map(cal.is_working_day)
+
+    tmp = tmp.astype("bool")
+    tmp = tmp.stack()
+    on = ["date", "state_id"]
+
+    tmp.index.rename(on, inplace=True)
+    tmp.rename("is_working_day", inplace=True)
+
+    tmp = df[on].merge(tmp, copy=False, on=on)
+    df["is_working_day"] = tmp["is_working_day"]
 
 
 def create_nearest_event_name(df):
