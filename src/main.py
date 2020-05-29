@@ -24,7 +24,7 @@ tasks = [
     "preprocess",
     "train_lgbm_reg",
     "predict",
-    "submit",
+    "submit_accuracy",
 ]
 
 for task in tasks:
