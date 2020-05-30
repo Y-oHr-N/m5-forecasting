@@ -35,12 +35,6 @@ __all__ = [
 ]
 
 
-def weekofmonth(dt):
-    dt_first = dt.replace(day=1)
-
-    return (dt.day + dt_first.weekday() - 1) // 7
-
-
 def count_consecutive_zero(s):
     out = np.full_like(s, np.nan, dtype="float32")
     state = np.nan
@@ -72,6 +66,12 @@ def days_until_one_day(s):
         out[-i - 1] = state
 
     return out
+
+
+def weekofmonth(dt):
+    dt_first = dt.replace(day=1)
+
+    return (dt.day + dt_first.weekday() - 1) // 7
 
 
 def create_aggregated_features(df, cols):
@@ -272,10 +272,12 @@ def create_is_working_day(df):
 
 
 def create_nearest_event_name(df):
+    # TODO: handle event_name_2
     df["nearest_event_name"] = df["event_name_1"].bfill()
 
 
 def create_nearest_event_type(df):
+    # TODO: handle event_type_2
     df["nearest_event_type"] = df["event_type_1"].bfill()
 
 
