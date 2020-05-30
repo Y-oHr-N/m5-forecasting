@@ -130,7 +130,6 @@ categorical_features = ids + [
     "event_type",
 ]
 
-aggregated_features = [f"sell_price_{agg_func_name}" for agg_func_name in agg_funcs]
 
 calendar_features = [
     "year",
