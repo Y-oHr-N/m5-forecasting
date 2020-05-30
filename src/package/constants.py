@@ -79,10 +79,26 @@ by = ["store_id", "item_id"]
 target = "sales"
 transformed_target = "dollar_sales"
 
-agg_funcs = ["min", "max", "mean", "std", "nunique"]
-agg_funcs_for_ewm = ["mean"]
-agg_funcs_for_expanding = ["min", "max", "mean", "std"]
-agg_funcs_for_rolling = ["mean", "std"]
+agg_funcs = {
+    "min": "min",
+    "max": "max",
+    "mean": "mean",
+    "std": "std",
+    "nunique": "nunique",
+}
+agg_funcs_for_ewm = {
+    "mean": "mean",
+}
+agg_funcs_for_expanding = {
+    "min": "min",
+    "max": "max",
+    "mean": "mean",
+    "std": "std",
+}
+agg_funcs_for_rolling = {
+    "mean": "mean",
+    "std": "std",
+}
 
 periods_batch = [28]
 periods_online = [7]
@@ -105,7 +121,7 @@ categorical_features = [
     "event_type",
 ]
 
-aggregated_features = [f"sell_price_{agg_func}" for agg_func in agg_funcs]
+aggregated_features = [f"sell_price_{agg_func_name}" for agg_func_name in agg_funcs]
 
 calendar_features = [
     "year",
@@ -119,7 +135,7 @@ calendar_features = [
 ]
 
 expanding_features = [
-    f"sell_price_expanding_{agg_func}" for agg_func in agg_funcs_for_expanding
+    f"sell_price_expanding_{agg_func_name}" for agg_func_name in agg_funcs_for_expanding
 ]
 
 pct_change_features = [f"sell_price_pct_change_{i}" for i in periods]
@@ -131,10 +147,10 @@ shift_features_online = [f"{target}_shift_{i}" for i in periods_online]
 shift_features = shift_features_online + shift_features_batch
 
 rolling_features = [
-    f"{shift_feature}_rolling_{j}_{agg_func}"
+    f"{shift_feature}_rolling_{j}_{agg_func_name}"
     for shift_feature in shift_features
     for j in windows
-    for agg_func in agg_funcs_for_rolling
+    for agg_func_name in agg_funcs_for_rolling
 ]
 
 numerical_features = (

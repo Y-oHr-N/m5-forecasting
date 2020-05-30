@@ -78,8 +78,8 @@ def create_aggregated_features(df, cols):
     grouped = df.groupby(by)
 
     for col in cols:
-        for agg_func in agg_funcs:
-            df[f"{col}_{agg_func}"] = grouped[col].transform(agg_func)
+        for agg_func_name, agg_func in agg_funcs.items():
+            df[f"{col}_{agg_func_name}"] = grouped[col].transform(agg_func)
 
 
 def create_calendar_features(df, col):
@@ -120,8 +120,8 @@ def create_ewm_features(df, cols, windows):
 
     for col in cols:
         for j in windows:
-            for agg_func in agg_funcs_for_ewm:
-                df[f"{col}_ewm_{j}_{agg_func}"] = grouped[col].apply(
+            for agg_func_name, agg_func in agg_funcs_for_ewm.items():
+                df[f"{col}_ewm_{j}_{agg_func_name}"] = grouped[col].apply(
                     lambda s: s.ewm(span=j).aggregate(agg_func)
                 )
 
@@ -130,17 +130,17 @@ def create_expanding_features(df, cols):
     grouped = df.groupby(by)
 
     for col in cols:
-        for agg_func in agg_funcs_for_expanding:
-            if agg_func == "min":
-                df[f"{col}_expanding_{agg_func}"] = grouped[col].cummin()
-            elif agg_func == "max":
-                df[f"{col}_expanding_{agg_func}"] = grouped[col].cummax()
+        for agg_func_name, agg_func in agg_funcs_for_expanding.items():
+            if agg_func_name == "min":
+                df[f"{col}_expanding_{agg_func_name}"] = grouped[col].cummin()
+            elif agg_func_name == "max":
+                df[f"{col}_expanding_{agg_func_name}"] = grouped[col].cummax()
             else:
                 feature = grouped[col].expanding().aggregate(agg_func)
 
                 feature.sort_index(level=-1, inplace=True)
 
-                df[f"{col}_expanding_{agg_func}"] = feature.values
+                df[f"{col}_expanding_{agg_func_name}"] = feature.values
 
 
 def create_pct_change_features(df, cols, periods):
@@ -156,8 +156,8 @@ def create_rolling_features(df, cols, windows):
 
     for col in cols:
         for j in windows:
-            for agg_func in agg_funcs_for_rolling:
-                df[f"{col}_rolling_{j}_{agg_func}"] = grouped[col].apply(
+            for agg_func_name, agg_func in agg_funcs_for_rolling.items():
+                df[f"{col}_rolling_{j}_{agg_func_name}"] = grouped[col].apply(
                     lambda s: s.rolling(j).aggregate(agg_func)
                 )
 
