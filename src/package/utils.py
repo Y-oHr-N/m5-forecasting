@@ -1,49 +1,10 @@
 import numpy as np
 import pandas as pd
 
-from .constants import *
-
 __all__ = [
     "create_sample_weight",
     "reduce_memory_usage",
 ]
-
-
-def compute_scale(df):
-    grouped = df.groupby(by)
-
-    is_not_selled = df["sell_price"].isnull()
-    df["scale"] = grouped[target].diff()
-    df.loc[is_not_selled, "scale"] = np.nan
-
-    df["scale"] **= 2
-
-    return grouped["scale"].mean()
-
-
-def compute_weight_12(df, start_date=validation_start_date, end_date=train_end_date):
-    grouped = df.groupby(by)
-
-    is_valid = (df["date"] >= start_date) & (df["date"] <= end_date)
-    df["weight_12"] = np.nan
-    df.loc[is_valid, "weight_12"] = (
-        df.loc[is_valid, "sell_price"] * df.loc[is_valid, target]
-    )
-
-    weight_12 = grouped["weight_12"].sum()
-    weight_12 /= weight_12.sum()
-
-    return weight_12
-
-
-def compute_scaled_weight_12(df):
-    scale = compute_scale(df)
-    weight_12 = compute_weight_12(df)
-    weight_12 /= np.sqrt(scale)
-
-    weight_12.rename("scaled_weight_12", inplace=True)
-
-    return weight_12
 
 
 def create_sample_weight(df, denom=1):
