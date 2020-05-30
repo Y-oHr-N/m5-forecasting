@@ -75,7 +75,7 @@ def weekofmonth(dt):
 
 
 def create_aggregated_features(df, cols):
-    grouped = df.groupby(by)
+    grouped = df.groupby(level_ids[11])
 
     for col in cols:
         for agg_func_name, agg_func in agg_funcs.items():
@@ -98,7 +98,7 @@ def create_combined_features(df, cols):
 
 
 def create_count_consecutive_zero_features(df, cols):
-    grouped = df.groupby(by)
+    grouped = df.groupby(level_ids[11])
 
     for col in cols:
         df[f"{col}_count_consecutive_zero"] = grouped[col].transform(
@@ -116,7 +116,7 @@ def create_encoded_features(df, cols):
 
 
 def create_ewm_features(df, cols, windows):
-    grouped = df.groupby(by)
+    grouped = df.groupby(level_ids[11])
 
     for col in cols:
         for j in windows:
@@ -127,7 +127,7 @@ def create_ewm_features(df, cols, windows):
 
 
 def create_expanding_features(df, cols):
-    grouped = df.groupby(by)
+    grouped = df.groupby(level_ids[11])
 
     for col in cols:
         for agg_func_name, agg_func in agg_funcs_for_expanding.items():
@@ -144,7 +144,7 @@ def create_expanding_features(df, cols):
 
 
 def create_pct_change_features(df, cols, periods):
-    grouped = df.groupby(by)
+    grouped = df.groupby(level_ids[11])
 
     for col in cols:
         for i in periods:
@@ -152,7 +152,7 @@ def create_pct_change_features(df, cols, periods):
 
 
 def create_rolling_features(df, cols, windows):
-    grouped = df.groupby(by)
+    grouped = df.groupby(level_ids[11])
 
     for col in cols:
         for j in windows:
@@ -163,21 +163,22 @@ def create_rolling_features(df, cols, windows):
 
 
 def create_scaled_features(df, cols):
-    grouped = df.groupby(by)
+    grouped = df.groupby(level_ids[11])
 
     for col in cols:
         df[f"scaled_{col}"] = df[col] / grouped[col].transform("max")
 
 
 def create_shift_features(df, cols, periods):
+    grouped = df.groupby(level_ids[11])
+
     for col in cols:
         for i in periods:
-            grouped = df.groupby(by)
             df[f"{col}_shift_{i}"] = grouped[col].shift(i)
 
 
 def create_days_since_release(df):
-    grouped = df.groupby(by)
+    grouped = df.groupby(level_ids[11])
 
     is_not_selled = df["sell_price"].isnull()
     df["days_since_release"] = df["date"]

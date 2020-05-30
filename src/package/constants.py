@@ -75,7 +75,20 @@ nba_finals_dates = [
     "2016-06-19",
 ]
 
-by = ["store_id", "item_id"]
+level_ids = (
+    None,
+    "state_id",
+    "store_id",
+    "cat_id",
+    "dept_id",
+    ["state_id", "cat_id"],
+    ["state_id", "dept_id"],
+    ["store_id", "cat_id"],
+    ["store_id", "dept_id"],
+    "item_id",
+    ["item_id", "state_id"],
+    ["item_id", "store_id"],
+)
 target = "sales"
 transformed_target = "dollar_sales"
 
