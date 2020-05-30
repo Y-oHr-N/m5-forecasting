@@ -74,8 +74,8 @@ def weekofmonth(dt):
     return (dt.day + dt_first.weekday() - 1) // 7
 
 
-def create_aggregated_features(df, cols):
-    grouped = df.groupby(level_ids[11])
+def create_aggregated_features(df, cols, by):
+    grouped = df.groupby(by)
 
     for col in cols:
         for agg_func_name, agg_func in agg_funcs.items():
@@ -97,8 +97,8 @@ def create_combined_features(df, cols):
         df[f"{col1}*{col2}"] = func(df[col1].values, df[col2].values)
 
 
-def create_count_consecutive_zero_features(df, cols):
-    grouped = df.groupby(level_ids[11])
+def create_count_consecutive_zero_features(df, cols, by):
+    grouped = df.groupby(by)
 
     for col in cols:
         df[f"{col}_count_consecutive_zero"] = grouped[col].transform(
@@ -115,8 +115,8 @@ def create_encoded_features(df, cols):
         df[f"encoded_{col}"] = grouped[f"encoded_{col}"].ffill()
 
 
-def create_ewm_features(df, cols, windows):
-    grouped = df.groupby(level_ids[11])
+def create_ewm_features(df, cols, by, windows):
+    grouped = df.groupby(by)
 
     for col in cols:
         for j in windows:
@@ -126,8 +126,8 @@ def create_ewm_features(df, cols, windows):
                 )
 
 
-def create_expanding_features(df, cols):
-    grouped = df.groupby(level_ids[11])
+def create_expanding_features(df, cols, by):
+    grouped = df.groupby(by)
 
     for col in cols:
         for agg_func_name, agg_func in agg_funcs_for_expanding.items():
@@ -143,16 +143,16 @@ def create_expanding_features(df, cols):
                 df[f"{col}_expanding_{agg_func_name}"] = feature.values
 
 
-def create_pct_change_features(df, cols, periods):
-    grouped = df.groupby(level_ids[11])
+def create_pct_change_features(df, cols, by, periods):
+    grouped = df.groupby(by)
 
     for col in cols:
         for i in periods:
             df[f"{col}_pct_change_{i}"] = grouped[col].pct_change(i)
 
 
-def create_rolling_features(df, cols, windows):
-    grouped = df.groupby(level_ids[11])
+def create_rolling_features(df, cols, by, windows):
+    grouped = df.groupby(by)
 
     for col in cols:
         for j in windows:
@@ -162,15 +162,15 @@ def create_rolling_features(df, cols, windows):
                 )
 
 
-def create_scaled_features(df, cols):
-    grouped = df.groupby(level_ids[11])
+def create_scaled_features(df, cols, by):
+    grouped = df.groupby(by)
 
     for col in cols:
         df[f"scaled_{col}"] = df[col] / grouped[col].transform("max")
 
 
-def create_shift_features(df, cols, periods):
-    grouped = df.groupby(level_ids[11])
+def create_shift_features(df, cols, by, periods):
+    grouped = df.groupby(by)
 
     for col in cols:
         for i in periods:
