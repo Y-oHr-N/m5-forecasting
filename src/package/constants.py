@@ -143,7 +143,8 @@ calendar_features = [
 ]
 
 expanding_features = [
-    f"sell_price_expanding_{agg_func_name}" for agg_func_name in agg_funcs_for_expanding
+    f"groupby_item_id_store_id_sell_price_expanding_{agg_func_name}"
+    for agg_func_name in agg_funcs_for_expanding
 ]
 
 pct_change_features = [f"sell_price_pct_change_{i}" for i in periods]

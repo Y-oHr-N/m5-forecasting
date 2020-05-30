@@ -134,21 +134,33 @@ def create_ewm_features(df, cols, by, windows):
                 )
 
 
-def create_expanding_features(df, cols, by):
-    grouped = df.groupby(by)
+def create_expanding_features(df, cols, ids):
+    for _id in ids:
+        if isinstance(_id, list):
+            id_name = "_".join(_id)
+        else:
+            id_name = _id
 
-    for col in cols:
-        for agg_func_name, agg_func in agg_funcs_for_expanding.items():
-            if agg_func_name == "min":
-                df[f"{col}_expanding_{agg_func_name}"] = grouped[col].cummin()
-            elif agg_func_name == "max":
-                df[f"{col}_expanding_{agg_func_name}"] = grouped[col].cummax()
-            else:
-                feature = grouped[col].expanding().aggregate(agg_func)
+        grouped = df.groupby(_id)
 
-                feature.sort_index(level=-1, inplace=True)
+        for col in cols:
+            for agg_func_name, agg_func in agg_funcs_for_expanding.items():
+                if agg_func_name == "min":
+                    df[f"groupby_{id_name}_{col}_expanding_{agg_func_name}"] = grouped[
+                        col
+                    ].cummin()
+                elif agg_func_name == "max":
+                    df[f"groupby_{id_name}_{col}_expanding_{agg_func_name}"] = grouped[
+                        col
+                    ].cummax()
+                else:
+                    feature = grouped[col].expanding().aggregate(agg_func)
 
-                df[f"{col}_expanding_{agg_func_name}"] = feature.values
+                    feature.sort_index(level=-1, inplace=True)
+
+                    df[
+                        f"groupby_{id_name}_{col}_expanding_{agg_func_name}"
+                    ] = feature.values
 
 
 def create_pct_change_features(df, cols, by, periods):
