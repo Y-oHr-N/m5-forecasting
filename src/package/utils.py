@@ -7,11 +7,11 @@ __all__ = [
 ]
 
 
-def create_sample_weight(df, denom=1):
-    date_min = df["date"].min()
-    date_max = df["date"].max()
+def create_sample_weight(df, date_col, denom=1):
+    date_min = df[date_col].min()
+    date_max = df[date_col].max()
     span = (date_max - date_min).days // denom + 1
-    elapsed_time = (df["date"] - date_min).dt.days // denom
+    elapsed_time = (df[date_col] - date_min).dt.days // denom
     alpha = 2 / (span + 1)
     df["sample_weight"] = (1 - alpha) ** (span - elapsed_time - 1)
 
