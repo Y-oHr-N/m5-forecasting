@@ -75,7 +75,8 @@ nba_finals_dates = [
     "2016-06-19",
 ]
 
-level_ids = (
+ids = ["state_id", "store_id", "cat_id", "dept_id", "item_id"]
+level_ids = [
     None,
     "state_id",
     "store_id",
@@ -88,7 +89,7 @@ level_ids = (
     "item_id",
     ["item_id", "state_id"],
     ["item_id", "store_id"],
-)
+]
 target = "sales"
 transformed_target = "dollar_sales"
 
@@ -124,12 +125,7 @@ binary_features = [
     "is_working_day",
 ]
 
-categorical_features = [
-    "store_id",
-    "item_id",
-    "dept_id",
-    "cat_id",
-    "state_id",
+categorical_features = ids + [
     "event_name",
     "event_type",
 ]
