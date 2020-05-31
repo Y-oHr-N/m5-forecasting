@@ -75,7 +75,6 @@ nba_finals_dates = [
     "2016-06-19",
 ]
 
-ids = ["state_id", "store_id", "cat_id", "dept_id", "item_id"]
 level_ids = [
     None,
     "state_id",
@@ -90,6 +89,7 @@ level_ids = [
     ["item_id", "state_id"],
     ["item_id", "store_id"],
 ]
+
 target = "sales"
 transformed_target = "dollar_sales"
 
@@ -128,11 +128,23 @@ binary_features = [
     "is_working_day",
 ]
 
-categorical_features = ids + [
+categorical_features = [
+    "state_id",
+    "store_id",
+    "cat_id",
+    "dept_id",
+    "item_id",
     "event_name",
     "event_type",
 ]
 
+aggregated_features = [
+    f"groupby_{'&'.join(level_id)}_sell_price_{agg_func_name}"
+    if isinstance(level_id, list)
+    else f"groupby_{level_id}_sell_price_{agg_func_name}"
+    for level_id in level_ids[1:11]
+    for agg_func_name in agg_funcs
+]
 
 calendar_features = [
     "year",
@@ -143,12 +155,6 @@ calendar_features = [
     "day",
     "weekofmonth",
     "weekday",
-]
-
-aggregated_features = [
-    f"groupby_{_id}_sell_price_{agg_func_name}"
-    for _id in ids
-    for agg_func_name in agg_funcs
 ]
 
 expanding_features = [

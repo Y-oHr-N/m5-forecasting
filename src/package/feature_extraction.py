@@ -77,7 +77,7 @@ def weekofmonth(dt):
 def create_aggregated_features(df, cols, ids):
     for _id in ids:
         if isinstance(_id, list):
-            id_name = "_".join(_id)
+            id_name = "&".join(_id)
         else:
             id_name = _id
 
