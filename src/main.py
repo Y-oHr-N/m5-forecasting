@@ -1,3 +1,4 @@
+import argparse
 import datetime
 import pathlib
 import sys
@@ -20,12 +21,27 @@ work_dir_path = outputs_dir_path / now.strftime("%Y_%m_%d_%H_%M_%S")
 
 work_dir_path.mkdir()
 
+parser = argparse.ArgumentParser()
+
+parser.add_argument(
+    "-u",
+    "--uncertainty",
+    action="store_true",
+    help="submit to m5-forecasting-uncertainty",
+)
+
+args = parser.parse_args()
+
 tasks = [
     "preprocess",
     "train_lgbm_reg",
     "predict",
-    "submit_accuracy",
 ]
+
+if args.uncertainty:
+    tasks.append("submit_uncertainty")
+else:
+    tasks.append("submit_accuracy")
 
 for task in tasks:
     pm.execute_notebook(
