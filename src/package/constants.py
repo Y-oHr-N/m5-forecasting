@@ -94,11 +94,11 @@ target = "sales"
 transformed_target = "dollar_sales"
 
 agg_funcs = {
-    "min": "min",
-    "max": "max",
+    # "min": "min",
+    # "max": "max",
     "mean": "mean",
-    "std": "std",
-    "nunique": "nunique",
+    # "std": "std",
+    # "nunique": "nunique",
 }
 agg_funcs_for_ewm = {
     "mean": "mean",
@@ -142,6 +142,12 @@ calendar_features = [
     "weekday",
 ]
 
+aggregated_features = [
+    f"groupby_{_id}_sell_price_{agg_func_name}"
+    for _id in ids
+    for agg_func_name in agg_funcs
+]
+
 expanding_features = [
     f"groupby_item_id_store_id_sell_price_expanding_{agg_func_name}"
     for agg_func_name in agg_funcs_for_expanding
@@ -164,6 +170,7 @@ rolling_features = [
 
 numerical_features = (
     ["sell_price"]
+    + aggregated_features
     + calendar_features
     + expanding_features
     + pct_change_features
