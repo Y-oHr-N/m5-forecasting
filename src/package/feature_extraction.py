@@ -296,14 +296,18 @@ def create_is_working_day(df):
     df["is_working_day"] = tmp["is_working_day"]
 
 
-def create_nearest_event_name(df):
+def create_nearest_event_name(df, limit=None):
     # TODO: handle event_name_2
-    df["nearest_event_name"] = df["event_name_1"].bfill()
+    df["nearest_event_name"] = df["event_name_1"].astype("object")
+    df["nearest_event_name"] = df["nearest_event_name"].bfill(limit=limit)
+    df["nearest_event_name"] = df["nearest_event_name"].astype("category")
 
 
-def create_nearest_event_type(df):
+def create_nearest_event_type(df, limit=None):
     # TODO: handle event_type_2
-    df["nearest_event_type"] = df["event_type_1"].bfill()
+    df["nearest_event_type"] = df["event_type_1"].astype("object")
+    df["nearest_event_type"] = df["nearest_event_type"].bfill(limit=limit)
+    df["nearest_event_type"] = df["nearest_event_type"].astype("category")
 
 
 def create_sell_price_ending(df):
