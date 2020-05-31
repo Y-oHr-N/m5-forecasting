@@ -152,7 +152,10 @@ aggregated_features = [
 ]
 
 expanding_features = [
-    f"groupby_item_id_store_id_sell_price_expanding_{agg_func_name}"
+    f"groupby_{'&'.join(level_id)}_sell_price_expanding_{agg_func_name}"
+    if isinstance(level_id, list)
+    else f"groupby_{level_id}_sell_price_expanding_{agg_func_name}"
+    for level_id in level_ids[11:]
     for agg_func_name in agg_funcs_for_expanding
 ]
 

@@ -137,7 +137,7 @@ def create_ewm_features(df, cols, by, windows):
 def create_expanding_features(df, cols, ids):
     for _id in ids:
         if isinstance(_id, list):
-            id_name = "_".join(_id)
+            id_name = "&".join(_id)
         else:
             id_name = _id
 
