@@ -194,6 +194,7 @@ rolling_features = [
 
 numerical_features = (
     raw_numerical_features
+    + ["days_since_release"]
     + aggregate_features
     + calendar_features
     + expanding_features
