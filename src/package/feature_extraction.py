@@ -173,10 +173,14 @@ def create_rolling_features(df, cols, by, windows):
 
     for col in cols:
         for j in windows:
+            rolling = grouped[col].rolling(j)
+
             for agg_func_name, agg_func in agg_funcs_for_rolling.items():
-                df[f"{col}_rolling_{j}_{agg_func_name}"] = grouped[col].apply(
-                    lambda s: s.rolling(j).aggregate(agg_func)
-                )
+                feature = rolling.aggregate(agg_func)
+
+                feature.sort_index(level=-1, inplace=True)
+
+                df[f"{col}_rolling_{j}_{agg_func_name}"] = feature.values
 
 
 def create_scaled_features(df, cols, by):
