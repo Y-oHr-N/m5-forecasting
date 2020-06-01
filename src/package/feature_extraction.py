@@ -90,12 +90,13 @@ def create_aggregate_features(df, cols, ids):
                 )
 
 
-def create_calendar_features(df, col):
-    for attr in calendar_features:
-        if attr == "weekofmonth":
-            df[attr] = df[col].apply(weekofmonth)
-        else:
-            df[attr] = getattr(df[col].dt, attr)
+def create_calendar_features(df, cols):
+    for col in cols:
+        for attr in attrs:
+            if attr == "weekofmonth":
+                df[f"{col}_{attr}"] = df[col].apply(weekofmonth)
+            else:
+                df[f"{col}_{attr}"] = getattr(df[col].dt, attr)
 
 
 def create_combined_features(df, cols):

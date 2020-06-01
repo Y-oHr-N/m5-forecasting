@@ -93,6 +93,17 @@ level_ids = [
 target = "sales"
 transformed_target = "dollar_sales"
 
+attrs = [
+    "year",
+    "dayofyear",
+    "weekofyear",
+    "month",
+    "quarter",
+    "day",
+    "weekofmonth",
+    "weekday",
+]
+
 agg_funcs = {
     # "min": "min",
     # "max": "max",
@@ -149,16 +160,7 @@ aggregate_features = [
     for agg_func_name in agg_funcs
 ]
 
-calendar_features = [
-    "year",
-    "dayofyear",
-    "weekofyear",
-    "month",
-    "quarter",
-    "day",
-    "weekofmonth",
-    "weekday",
-]
+calendar_features = [f"{col}_{attr}" for col in parse_dates for attr in attrs]
 
 expanding_features = [
     f"groupby_{'&'.join(level_id)}_{raw_numerical_feature}_expanding_{agg_func_name}"
