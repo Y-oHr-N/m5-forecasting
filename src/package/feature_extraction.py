@@ -146,22 +146,18 @@ def create_expanding_features(df, cols, ids):
 
         for col in cols:
             for agg_func_name, agg_func in agg_funcs_for_expanding.items():
+                new_col = f"groupby_{id_name}_{col}_expanding_{agg_func_name}"
+
                 if agg_func_name == "min":
-                    df[f"groupby_{id_name}_{col}_expanding_{agg_func_name}"] = grouped[
-                        col
-                    ].cummin()
+                    df[new_col] = grouped[col].cummin()
                 elif agg_func_name == "max":
-                    df[f"groupby_{id_name}_{col}_expanding_{agg_func_name}"] = grouped[
-                        col
-                    ].cummax()
+                    df[new_col] = grouped[col].cummax()
                 else:
                     feature = grouped[col].expanding().aggregate(agg_func)
 
                     feature.sort_index(level=-1, inplace=True)
 
-                    df[
-                        f"groupby_{id_name}_{col}_expanding_{agg_func_name}"
-                    ] = feature.values
+                    df[new_col] = feature.values
 
 
 def create_pct_change_features(df, cols, by, periods):
