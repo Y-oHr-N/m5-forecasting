@@ -2,12 +2,12 @@ import numpy as np
 import pandas as pd
 
 __all__ = [
-    "create_sample_weight",
+    "create_exponential_sample_weight",
     "reduce_memory_usage",
 ]
 
 
-def create_sample_weight(df, date_col, denom=1):
+def create_exponential_sample_weight(df, date_col, denom=1):
     date_min = df[date_col].min()
     date_max = df[date_col].max()
     span = (date_max - date_min).days // denom + 1
