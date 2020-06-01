@@ -10,7 +10,7 @@ from .constants import *
 
 __all__ = [
     # Functions for general features
-    "create_aggregated_features",
+    "create_aggregate_features",
     "create_calendar_features",
     "create_combined_features",
     "create_count_consecutive_zero_features",
@@ -74,7 +74,7 @@ def weekofmonth(dt):
     return (dt.day + dt_first.weekday() - 1) // 7
 
 
-def create_aggregated_features(df, cols, ids):
+def create_aggregate_features(df, cols, ids):
     for _id in ids:
         if isinstance(_id, list):
             id_name = "&".join(_id)

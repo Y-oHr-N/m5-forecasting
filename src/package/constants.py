@@ -138,11 +138,14 @@ categorical_features = [
     "event_type",
 ]
 
-aggregated_features = [
-    f"groupby_{'&'.join(level_id)}_sell_price_{agg_func_name}"
+raw_numerical_features = ["sell_price"]
+
+aggregate_features = [
+    f"groupby_{'&'.join(level_id)}_{raw_numerical_feature}_{agg_func_name}"
     if isinstance(level_id, list)
-    else f"groupby_{level_id}_sell_price_{agg_func_name}"
+    else f"groupby_{level_id}_{raw_numerical_feature}_{agg_func_name}"
     for level_id in level_ids[1:11]
+    for raw_numerical_feature in raw_numerical_features
     for agg_func_name in agg_funcs
 ]
 
@@ -158,16 +161,23 @@ calendar_features = [
 ]
 
 expanding_features = [
-    f"groupby_{'&'.join(level_id)}_sell_price_expanding_{agg_func_name}"
+    f"groupby_{'&'.join(level_id)}_{raw_numerical_feature}_expanding_{agg_func_name}"
     if isinstance(level_id, list)
-    else f"groupby_{level_id}_sell_price_expanding_{agg_func_name}"
+    else f"groupby_{level_id}_{raw_numerical_feature}_expanding_{agg_func_name}"
     for level_id in level_ids[11:]
+    for raw_numerical_feature in raw_numerical_features
     for agg_func_name in agg_funcs_for_expanding
 ]
 
-pct_change_features = [f"sell_price_pct_change_{i}" for i in periods]
+pct_change_features = [
+    f"{raw_numerical_feature}_pct_change_{i}"
+    for raw_numerical_feature in raw_numerical_features
+    for i in periods
+]
 
-scaled_features = ["scaled_sell_price"]
+scaled_features = [
+    "scaled_{raw_numerical_feature}" for raw_numerical_feature in raw_numerical_features
+]
 
 shift_features_batch = [f"{target}_shift_{i}" for i in periods_batch]
 shift_features_online = [f"{target}_shift_{i}" for i in periods_online]
@@ -181,8 +191,8 @@ rolling_features = [
 ]
 
 numerical_features = (
-    ["sell_price"]
-    + aggregated_features
+    raw_numerical_features
+    + aggregate_features
     + calendar_features
     + expanding_features
     + pct_change_features
