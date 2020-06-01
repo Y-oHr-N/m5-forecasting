@@ -1,10 +1,10 @@
 import pandas as pd
 from sklearn.utils import check_random_state
 
-__all__ = ["add_noise", "label_encode"]
+__all__ = ["add_gaussian_noise", "label_encode"]
 
 
-def add_noise(df, cols, sigma=0.01, random_state=None):
+def add_gaussian_noise(df, cols, sigma=0.01, random_state=None):
     n, _ = df.shape
     random_state = check_random_state(random_state)
 
