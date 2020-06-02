@@ -178,7 +178,8 @@ pct_change_features = [
 ]
 
 scaled_features = [
-    f"scaled_{raw_numerical_feature}" for raw_numerical_feature in raw_numerical_features
+    f"scaled_{raw_numerical_feature}"
+    for raw_numerical_feature in raw_numerical_features
 ]
 
 shift_features_batch = [f"{target}_shift_{i}" for i in periods_batch]
