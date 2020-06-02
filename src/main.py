@@ -24,6 +24,10 @@ work_dir_path.mkdir()
 parser = argparse.ArgumentParser()
 
 parser.add_argument(
+    "-a", "--accuracy", action="store_true", help="submit to m5-forecasting-accuracy",
+)
+
+parser.add_argument(
     "-u",
     "--uncertainty",
     action="store_true",
@@ -38,10 +42,11 @@ tasks = [
     "predict",
 ]
 
+if args.accuracy:
+    tasks.append("submit_accuracy")
+
 if args.uncertainty:
     tasks.append("submit_uncertainty")
-else:
-    tasks.append("submit_accuracy")
 
 for task in tasks:
     pm.execute_notebook(
