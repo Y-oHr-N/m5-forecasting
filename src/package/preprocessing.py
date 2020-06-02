@@ -52,9 +52,9 @@ def detrend(df):
     tmp = tmp.unstack()
     on = ["item_id", "store_id", "date"]
 
-    tmp.rename("linear_trend", inplace=True)
+    tmp.rename("trend", inplace=True)
 
     tmp = df[on].merge(tmp, copy=False, on=on)
 
-    df["linear_trend"] = tmp["linear_trend"]
-    df[f"detrended_{target}"] = df[target] - tmp["linear_trend"]
+    df["trend"] = tmp["trend"]
+    df[f"detrended_{target}"] = df[target] - tmp["trend"]
