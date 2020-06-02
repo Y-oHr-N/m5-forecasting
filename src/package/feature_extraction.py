@@ -12,9 +12,7 @@ __all__ = [
     # Functions for general features
     "create_aggregate_features",
     "create_calendar_features",
-    "create_combined_features",
     "create_count_consecutive_zero_features",
-    "create_encoded_features",
     "create_ewm_features",
     "create_expanding_features",
     "create_pct_change_features",
@@ -99,13 +97,6 @@ def create_calendar_features(df, cols):
                 df[f"{col}_{attr}"] = getattr(df[col].dt, attr)
 
 
-def create_combined_features(df, cols):
-    func = np.vectorize(lambda x1, x2: "{}*{}".format(x1, x2))
-
-    for col1, col2 in itertools.combinations(cols, 2):
-        df[f"{col1}*{col2}"] = func(df[col1].values, df[col2].values)
-
-
 def create_count_consecutive_zero_features(df, cols, by):
     grouped = df.groupby(by)
 
@@ -113,15 +104,6 @@ def create_count_consecutive_zero_features(df, cols, by):
         df[f"{col}_count_consecutive_zero"] = grouped[col].transform(
             count_consecutive_zero
         )
-
-
-def create_encoded_features(df, cols):
-    for col in cols:
-        grouped = df.groupby(col)
-        df[f"encoded_{col}"] = grouped[target].cumsum() / (
-            grouped[target].cumcount() + 1
-        )
-        df[f"encoded_{col}"] = grouped[f"encoded_{col}"].ffill()
 
 
 def create_ewm_features(df, cols, by, windows):
