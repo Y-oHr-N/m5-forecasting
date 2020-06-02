@@ -12,7 +12,7 @@ __all__ = [
     # Functions for general features
     "create_aggregate_features",
     "create_calendar_features",
-    "create_count_consecutive_zero_features",
+    "create_count_up_until_nonzero_features",
     "create_ewm_features",
     "create_expanding_features",
     "create_pct_change_features",
@@ -22,7 +22,7 @@ __all__ = [
     # Functions for specific features
     "create_days_since_release",
     "create_days_until_event",
-    "create_days_until_weekend",
+    "create_days_until_non_working_day",
     "create_event_name",
     "create_event_type",
     "create_is_working_day",
@@ -33,7 +33,7 @@ __all__ = [
 ]
 
 
-def count_consecutive_zero(s):
+def count_up_until_nonzero(s):
     out = np.full_like(s, np.nan, dtype="float32")
     state = np.nan
 
@@ -51,19 +51,10 @@ def count_consecutive_zero(s):
     return out
 
 
-def days_until_one_day(s):
-    out = np.empty_like(s, dtype="float32")
-    state = np.nan
+def count_down_until_nonzero(s):
+    out = count_up_until_nonzero(s.iloc[::-1])
 
-    for i, elm in enumerate(s.iloc[::-1]):
-        if elm:
-            state = 0
-        else:
-            state += 1
-
-        out[-i - 1] = state
-
-    return out
+    return out[::-1]
 
 
 def weekofmonth(dt):
@@ -97,12 +88,12 @@ def create_calendar_features(df, cols):
                 df[f"{col}_{attr}"] = getattr(df[col].dt, attr)
 
 
-def create_count_consecutive_zero_features(df, cols, by):
+def create_count_up_until_nonzero_features(df, cols, by):
     grouped = df.groupby(by)
 
     for col in cols:
-        df[f"{col}_count_consecutive_zero"] = grouped[col].transform(
-            count_consecutive_zero
+        df[f"{col}_count_up_until_nonzero"] = grouped[col].transform(
+            count_up_until_nonzero
         )
 
 
@@ -193,10 +184,10 @@ def create_days_since_release(df):
 
 def create_days_until_event(df):
     is_event = df["event_name_1"].notnull()
-    df["days_until_event"] = days_until_one_day(is_event)
+    df["days_until_event"] = count_down_until_nonzero(is_event)
 
 
-def create_days_until_weekend(df):
+def create_days_until_non_working_day(df):
     tmp = df["date"].unique()
     tmp = pd.DataFrame(index=tmp)
 
@@ -209,16 +200,16 @@ def create_days_until_weekend(df):
     for state_id, cal in cals.items():
         tmp[state_id] = tmp.index.map(cal.is_working_day)
         tmp[state_id] = tmp[state_id].astype("bool")
-        tmp[state_id] = days_until_one_day(~tmp[state_id])
+        tmp[state_id] = count_down_until_nonzero(~tmp[state_id])
 
     tmp = tmp.stack()
     on = ["date", "state_id"]
 
     tmp.index.rename(on, inplace=True)
-    tmp.rename("days_until_weekend", inplace=True)
+    tmp.rename("days_until_non_working_day", inplace=True)
 
     tmp = df[on].merge(tmp, copy=False, on=on)
-    df["days_until_weekend"] = tmp["days_until_weekend"]
+    df["days_until_non_working_day"] = tmp["days_until_non_working_day"]
 
 
 def create_event_name(df):
