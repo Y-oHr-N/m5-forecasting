@@ -11,7 +11,22 @@ __all__ = [
     "label_encode",
     # Specidifc functions
     "detrend",
+    "trim_outliers",
 ]
+
+
+def clip_based_on_quantile(s, low=None, high=None):
+    if low is None:
+        lower = None
+    else:
+        lower = s.quantile(q=low)
+
+    if high is None:
+        upper = None
+    else:
+        upper = s.quantile(q=high)
+
+    return s.clip(lower=lower, upper=upper)
 
 
 def add_gaussian_noise(df, cols, sigma=0.01, random_state=None):
@@ -58,3 +73,17 @@ def detrend(df):
 
     df["trend"] = tmp["trend"]
     df[f"detrended_{target}"] = df[target] - tmp["trend"]
+
+
+def trim_outliers(df, low=None, high=0.99):
+    grouped = df.groupby(level_ids[11])
+
+    trimmed_target = f"trimmed_{target}"
+    is_not_selled = df["sell_price"].isnull()
+
+    df[trimmed_target] = df[target]
+    df.loc[is_not_selled, trimmed_target] = np.nan
+
+    df[trimmed_target] = grouped[trimmed_target].apply(
+        clip_based_on_quantile, low=low, high=high
+    )
