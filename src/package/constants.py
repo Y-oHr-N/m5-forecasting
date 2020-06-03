@@ -113,7 +113,7 @@ agg_funcs = {
 }
 agg_funcs_for_ewm = {
     "mean": "mean",
-    # "std": "std",
+    "std": "std",
 }
 agg_funcs_for_expanding = {
     "min": "min",
