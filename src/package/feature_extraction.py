@@ -141,12 +141,12 @@ def create_pct_change_features(df, cols, by, periods):
             df[f"{col}_pct_change_{i}"] = grouped[col].pct_change(i)
 
 
-def create_rolling_features(df, cols, by, windows):
+def create_rolling_features(df, cols, by, windows, min_periods=None):
     grouped = df.groupby(by)
 
     for col in cols:
         for j in windows:
-            rolling = grouped[col].rolling(j)
+            rolling = grouped[col].rolling(j, min_periods=min_periods)
 
             for agg_func_name, agg_func in agg_funcs_for_rolling.items():
                 feature = rolling.aggregate(agg_func)
