@@ -152,10 +152,10 @@ categorical_features = [
 raw_numerical_features = ["sell_price"]
 
 aggregate_features = [
-    f"groupby_{'&'.join(level_id)}_{raw_numerical_feature}_{agg_func_name}"
-    if isinstance(level_id, list)
-    else f"groupby_{level_id}_{raw_numerical_feature}_{agg_func_name}"
-    for level_id in level_ids[1:11]
+    f"groupby_{'_&_'.join(_id)}_{raw_numerical_feature}_{agg_func_name}"
+    if isinstance(_id, list)
+    else f"groupby_{_id}_{raw_numerical_feature}_{agg_func_name}"
+    for _id in level_ids[1:11]
     for raw_numerical_feature in raw_numerical_features
     for agg_func_name in agg_funcs
 ]
@@ -163,10 +163,10 @@ aggregate_features = [
 calendar_features = [f"{col}_{attr}" for col in parse_dates for attr in attrs]
 
 expanding_features = [
-    f"groupby_{'&'.join(level_id)}_{raw_numerical_feature}_expanding_{agg_func_name}"
-    if isinstance(level_id, list)
-    else f"groupby_{level_id}_{raw_numerical_feature}_expanding_{agg_func_name}"
-    for level_id in level_ids[11:]
+    f"groupby_{'_&_'.join(_id)}_{raw_numerical_feature}_expanding_{agg_func_name}"
+    if isinstance(_id, list)
+    else f"groupby_{_id}_{raw_numerical_feature}_expanding_{agg_func_name}"
+    for _id in level_ids[11:]
     for raw_numerical_feature in raw_numerical_features
     for agg_func_name in agg_funcs_for_expanding
 ]
@@ -187,7 +187,10 @@ shift_features_online = [f"{target}_shift_{i}" for i in periods_online]
 shift_features = shift_features_online + shift_features_batch
 
 rolling_features = [
-    f"{shift_feature}_rolling_{j}_{agg_func_name}"
+    f"groupby_{'_&_'.join(_id)}_{shift_feature}_rolling_{j}_{agg_func_name}"
+    if isinstance(_id, list)
+    else f"groupby_{_id}_{shift_feature}_rolling_{j}_{agg_func_name}"
+    for _id in level_ids[11:]
     for shift_feature in shift_features
     for j in windows
     for agg_func_name in agg_funcs_for_rolling

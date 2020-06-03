@@ -66,7 +66,7 @@ def weekofmonth(dt):
 def create_aggregate_features(df, cols, ids):
     for _id in ids:
         if isinstance(_id, list):
-            id_name = "&".join(_id)
+            id_name = "_&_".join(_id)
         else:
             id_name = _id
 
@@ -97,21 +97,27 @@ def create_count_up_until_nonzero_features(df, cols, by):
         )
 
 
-def create_ewm_features(df, cols, by, windows):
-    grouped = df.groupby(by)
+def create_ewm_features(df, cols, ids, windows):
+    for _id in ids:
+        if isinstance(_id, list):
+            id_name = "_&_".join(_id)
+        else:
+            id_name = _id
 
-    for col in cols:
-        for j in windows:
-            for agg_func_name, agg_func in agg_funcs_for_ewm.items():
-                df[f"{col}_ewm_{j}_{agg_func_name}"] = grouped[col].apply(
-                    lambda s: s.ewm(span=j).aggregate(agg_func)
-                )
+        grouped = df.groupby(_id)
+
+        for col in cols:
+            for j in windows:
+                for agg_func_name, agg_func in agg_funcs_for_ewm.items():
+                    df[f"groupby_{id_name}_{col}_ewm_{j}_{agg_func_name}"] = grouped[
+                        col
+                    ].apply(lambda s: s.ewm(span=j).aggregate(agg_func))
 
 
 def create_expanding_features(df, cols, ids):
     for _id in ids:
         if isinstance(_id, list):
-            id_name = "&".join(_id)
+            id_name = "_&_".join(_id)
         else:
             id_name = _id
 
@@ -141,19 +147,27 @@ def create_pct_change_features(df, cols, by, periods):
             df[f"{col}_pct_change_{i}"] = grouped[col].pct_change(i)
 
 
-def create_rolling_features(df, cols, by, windows, min_periods=None):
-    grouped = df.groupby(by)
+def create_rolling_features(df, cols, ids, windows, min_periods=None):
+    for _id in ids:
+        if isinstance(_id, list):
+            id_name = "_&_".join(_id)
+        else:
+            id_name = _id
 
-    for col in cols:
-        for j in windows:
-            rolling = grouped[col].rolling(j, min_periods=min_periods)
+        grouped = df.groupby(_id)
 
-            for agg_func_name, agg_func in agg_funcs_for_rolling.items():
-                feature = rolling.aggregate(agg_func)
+        for col in cols:
+            for j in windows:
+                rolling = grouped[col].rolling(j, min_periods=min_periods)
 
-                feature.sort_index(level=-1, inplace=True)
+                for agg_func_name, agg_func in agg_funcs_for_rolling.items():
+                    feature = rolling.aggregate(agg_func)
 
-                df[f"{col}_rolling_{j}_{agg_func_name}"] = feature.values
+                    feature.sort_index(level=-1, inplace=True)
+
+                    df[
+                        f"groupby_{id_name}_{col}_rolling_{j}_{agg_func_name}"
+                    ] = feature.values
 
 
 def create_scaled_features(df, cols, by):
