@@ -134,6 +134,16 @@ periods = periods_online + periods_batch
 windows = [7, 28]
 max_lags = max(periods_online) + max(windows) - 1
 
+aggregate_feature_name_format = "groupby_{}_{}_{}".format
+calendar_feature_name_format = "{}_{}".format
+count_up_until_nonzero_feature_format = "{}_count_up_until_nonzero".format
+expanding_feature_name_format = "groupby_{}_{}_expanding_{}".format
+ewm_feature_name_format = "groupby_{}_{}_ewm_{}_{}".format
+pct_change_feature_name_format = "{}_pct_change_{}".format
+scaled_feature_name_format = "scaled_{}".format
+shift_feature_name_format = "{}_shift_{}".format
+rolling_feature_name_format = "groupby_{}_{}_rolling_{}_{}".format
+
 binary_features = [
     "snap",
     "is_working_day",
@@ -152,9 +162,9 @@ categorical_features = [
 raw_numerical_features = ["sell_price"]
 
 aggregate_features = [
-    f"groupby_{'_&_'.join(_id)}_{raw_numerical_feature}_{agg_func_name}"
+    aggregate_feature_name_format("_&_".join(_id), raw_numerical_feature, agg_func_name)
     if isinstance(_id, list)
-    else f"groupby_{_id}_{raw_numerical_feature}_{agg_func_name}"
+    else aggregate_feature_name_format(_id, raw_numerical_feature, agg_func_name)
     for _id in level_ids[1:11]
     for raw_numerical_feature in raw_numerical_features
     for agg_func_name in agg_funcs
@@ -163,33 +173,33 @@ aggregate_features = [
 calendar_features = [f"{col}_{attr}" for col in parse_dates for attr in attrs]
 
 expanding_features = [
-    f"groupby_{'_&_'.join(_id)}_{raw_numerical_feature}_expanding_{agg_func_name}"
+    expanding_feature_name_format("_&_".join(_id), raw_numerical_feature, agg_func_name)
     if isinstance(_id, list)
-    else f"groupby_{_id}_{raw_numerical_feature}_expanding_{agg_func_name}"
+    else expanding_feature_name_format(_id, raw_numerical_feature, agg_func_name)
     for _id in level_ids[11:]
     for raw_numerical_feature in raw_numerical_features
     for agg_func_name in agg_funcs_for_expanding
 ]
 
 pct_change_features = [
-    f"{raw_numerical_feature}_pct_change_{i}"
+    pct_change_feature_name_format(raw_numerical_feature, i)
     for raw_numerical_feature in raw_numerical_features
     for i in periods
 ]
 
 scaled_features = [
-    f"scaled_{raw_numerical_feature}"
+    scaled_feature_name_format(raw_numerical_feature)
     for raw_numerical_feature in raw_numerical_features
 ]
 
-shift_features_batch = [f"{target}_shift_{i}" for i in periods_batch]
-shift_features_online = [f"{target}_shift_{i}" for i in periods_online]
+shift_features_batch = [shift_feature_name_format(target, i) for i in periods_batch]
+shift_features_online = [shift_feature_name_format(target, i) for i in periods_online]
 shift_features = shift_features_online + shift_features_batch
 
 rolling_features = [
-    f"groupby_{'_&_'.join(_id)}_{shift_feature}_rolling_{j}_{agg_func_name}"
+    rolling_feature_name_format("_&_".join(_id), shift_feature, j, agg_func_name)
     if isinstance(_id, list)
-    else f"groupby_{_id}_{shift_feature}_rolling_{j}_{agg_func_name}"
+    else rolling_feature_name_format(_id, shift_feature, j, agg_func_name)
     for _id in level_ids[11:]
     for shift_feature in shift_features
     for j in windows
