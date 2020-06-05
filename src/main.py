@@ -11,16 +11,6 @@ if sys.platform == "win32":
 
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
-now = datetime.datetime.now()
-
-root_dir_path = pathlib.Path(".")
-notebooks_dir_path = root_dir_path / "notebooks"
-inputs_dir_path = notebooks_dir_path / "inputs"
-outputs_dir_path = notebooks_dir_path / "outputs"
-work_dir_path = outputs_dir_path / now.strftime("%Y_%m_%d_%H_%M_%S")
-
-work_dir_path.mkdir()
-
 parser = argparse.ArgumentParser()
 
 parser.add_argument("-n", "--name", default="submission", help="name an experiment")
@@ -37,6 +27,20 @@ parser.add_argument(
 )
 
 args = parser.parse_args()
+
+if args.name == "submission":
+    now = datetime.datetime.now()
+    work_dir_name = now.strftime("%Y_%m_%d_%H_%M_%S")
+else:
+    work_dir_name = args.name
+
+root_dir_path = pathlib.Path(".")
+notebooks_dir_path = root_dir_path / "notebooks"
+inputs_dir_path = notebooks_dir_path / "inputs"
+outputs_dir_path = notebooks_dir_path / "outputs"
+work_dir_path = outputs_dir_path / work_dir_name
+
+work_dir_path.mkdir(exist_ok=True, parents=True)
 
 tasks = [
     "preprocess",
