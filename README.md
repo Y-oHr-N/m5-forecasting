@@ -3,9 +3,10 @@
 ## Usage
 
 ```
+# Install related packages
 pip install -r requirements.txt
-# m5-forecasting-accuracy
-python src/main.py --accuracy
-# m5-forecasting-uncertainty
-python src/main.py --uncertainty
+# Submit to m5-forecasting-accuracy
+python src/main.py --name EXPERIMENT_NAME --accuracy
+# Submit to m5-forecasting-uncertainty
+python src/main.py --name EXPERIMENT_NAME -uncertainty
 ```

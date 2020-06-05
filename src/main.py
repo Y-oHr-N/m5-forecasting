@@ -23,6 +23,8 @@ work_dir_path.mkdir()
 
 parser = argparse.ArgumentParser()
 
+parser.add_argument("-n", "--name", default="submission", help="name an experiment")
+
 parser.add_argument(
     "-a", "--accuracy", action="store_true", help="submit to m5-forecasting-accuracy",
 )
@@ -52,5 +54,5 @@ for task in tasks:
     pm.execute_notebook(
         str(inputs_dir_path / (f"{task}.ipynb")),
         str(work_dir_path / (f"{task}.ipynb")),
-        parameters={"root_dir": str(root_dir_path)},
+        parameters={"name": args.name, "root_dir": str(root_dir_path)},
     )
