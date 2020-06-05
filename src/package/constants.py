@@ -75,7 +75,7 @@ nba_finals_dates = [
     "2016-06-19",
 ]
 
-level_id_cols = [
+level_ids = [
     None,
     "state_id",
     "store_id",
@@ -163,11 +163,11 @@ raw_numerical_features = ["sell_price"]
 
 aggregate_features = [
     aggregate_feature_name_format(
-        "_&_".join(id_col), raw_numerical_feature, agg_func_name
+        "_&_".join(by_col), raw_numerical_feature, agg_func_name
     )
-    if isinstance(id_col, list)
-    else aggregate_feature_name_format(id_col, raw_numerical_feature, agg_func_name)
-    for id_col in level_id_cols[1:11]
+    if isinstance(by_col, list)
+    else aggregate_feature_name_format(by_col, raw_numerical_feature, agg_func_name)
+    for by_col in level_ids[1:11]
     for raw_numerical_feature in raw_numerical_features
     for agg_func_name in agg_funcs
 ]
@@ -176,11 +176,11 @@ calendar_features = [f"{col}_{attr}" for col in parse_dates for attr in attrs]
 
 expanding_features = [
     expanding_feature_name_format(
-        "_&_".join(id_col), raw_numerical_feature, agg_func_name
+        "_&_".join(by_col), raw_numerical_feature, agg_func_name
     )
-    if isinstance(id_col, list)
-    else expanding_feature_name_format(id_col, raw_numerical_feature, agg_func_name)
-    for id_col in level_id_cols[11:]
+    if isinstance(by_col, list)
+    else expanding_feature_name_format(by_col, raw_numerical_feature, agg_func_name)
+    for by_col in level_ids[11:]
     for raw_numerical_feature in raw_numerical_features
     for agg_func_name in agg_funcs_for_expanding
 ]
@@ -201,10 +201,10 @@ shift_features_online = [shift_feature_name_format(target, i) for i in periods_o
 shift_features = shift_features_online + shift_features_batch
 
 rolling_features = [
-    rolling_feature_name_format("_&_".join(id_col), shift_feature, j, agg_func_name)
-    if isinstance(id_col, list)
-    else rolling_feature_name_format(id_col, shift_feature, j, agg_func_name)
-    for id_col in level_id_cols[11:]
+    rolling_feature_name_format("_&_".join(by_col), shift_feature, j, agg_func_name)
+    if isinstance(by_col, list)
+    else rolling_feature_name_format(by_col, shift_feature, j, agg_func_name)
+    for by_col in level_ids[11:]
     for shift_feature in shift_features
     for j in windows
     for agg_func_name in agg_funcs_for_rolling
