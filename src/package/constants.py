@@ -222,3 +222,20 @@ numerical_features = (
 features = binary_features + categorical_features + numerical_features
 
 random_state = 0
+
+lgb_params = {
+    "bagging_fraction": 0.75,
+    "bagging_freq": 1,
+    "feature_fraction": 0.8,
+    "lambda_l2": 0.1,
+    "learning_rate": 0.075,
+    "metric": "rmse",
+    "min_data_in_leaf": 104,
+    "n_jobs": -1,
+    "num_boost_round": 1_250,
+    "num_leaves": 128,
+    "objective": "tweedie",
+    "reg_sqrt": True,
+    "seed": random_state,
+    "tweedie_variance_power": 1.2,
+}
