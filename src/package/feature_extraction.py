@@ -172,12 +172,18 @@ def create_rolling_features(df, by_cols, cols, windows, min_periods=None):
                     df[new_col] = feature.values
 
 
-def create_scaled_features(df, by_col, cols):
-    grouped = df.groupby(by_col)
+def create_scaled_features(df, by_cols, cols):
+    for by_col in by_cols:
+        if isinstance(by_col, list):
+            id_name = "_&_".join(by_col)
+        else:
+            id_name = by_col
 
-    for col in cols:
-        new_col = scaled_feature_name_format(col)
-        df[new_col] = df[col] / grouped[col].transform("max")
+        grouped = df.groupby(by_col)
+
+        for col in cols:
+            new_col = scaled_feature_name_format(id_name, col)
+            df[new_col] = df[col] / grouped[col].transform("max")
 
 
 def create_shift_features(df, by_col, cols, periods):

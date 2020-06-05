@@ -140,7 +140,7 @@ count_up_until_nonzero_feature_format = "{}_count_up_until_nonzero".format
 expanding_feature_name_format = "groupby_{}_{}_expanding_{}".format
 ewm_feature_name_format = "groupby_{}_{}_ewm_{}_{}".format
 pct_change_feature_name_format = "{}_pct_change_{}".format
-scaled_feature_name_format = "scaled_{}".format
+scaled_feature_name_format = "groupby_{}_scaled_{}".format
 shift_feature_name_format = "{}_shift_{}".format
 rolling_feature_name_format = "groupby_{}_{}_rolling_{}_{}".format
 
@@ -192,7 +192,10 @@ pct_change_features = [
 ]
 
 scaled_features = [
-    scaled_feature_name_format(raw_numerical_feature)
+    scaled_feature_name_format("_&_".join(by_col), raw_numerical_feature)
+    if isinstance(by_col, list)
+    else scaled_feature_name_format(by_col, raw_numerical_feature)
+    for by_col in level_ids[11:]
     for raw_numerical_feature in raw_numerical_features
 ]
 
