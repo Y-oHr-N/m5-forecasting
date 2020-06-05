@@ -1,10 +1,24 @@
+import lightgbm as lgb
 import numpy as np
 import pandas as pd
 
 __all__ = [
+    "create_dataset",
     "create_exponential_sample_weight",
     "reduce_memory_usage",
 ]
+
+
+def create_dataset(data, is_train, feature_name, label, **kwargs):
+    X = data.loc[is_train, feature_name]
+    X = X.astype("float32")
+    X = X.values
+    y = data.loc[is_train, label]
+    y = y.values
+
+    kwargs["feature_name"] = feature_name
+
+    return lgb.Dataset(X, y, **kwargs)
 
 
 def create_exponential_sample_weight(df, date_col, denom=1):
