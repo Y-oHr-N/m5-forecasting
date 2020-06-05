@@ -235,7 +235,6 @@ lgb_params = {
     "num_boost_round": 1_250,
     "num_leaves": 128,
     "objective": "tweedie",
-    "reg_sqrt": True,
     "seed": random_state,
     "tweedie_variance_power": 1.2,
 }
