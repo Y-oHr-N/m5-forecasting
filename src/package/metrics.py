@@ -4,7 +4,7 @@ from .constants import *
 
 
 def compute_scale_12(df):
-    grouped = df.groupby(level_ids[11])
+    grouped = df.groupby(level_id_cols[11])
 
     is_not_selled = df["sell_price"].isnull()
     df["scale_12"] = grouped[target].diff()
@@ -16,7 +16,7 @@ def compute_scale_12(df):
 
 
 def compute_weight_12(df, start_date=validation_start_date, end_date=train_end_date):
-    grouped = df.groupby(level_ids[11])
+    grouped = df.groupby(level_id_cols[11])
 
     is_valid = (df["date"] >= start_date) & (df["date"] <= end_date)
     df["weight_12"] = np.nan

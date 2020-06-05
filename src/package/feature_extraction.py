@@ -61,14 +61,14 @@ def weekofmonth(dt):
     return (dt.day + dt_first.weekday() - 1) // 7
 
 
-def create_aggregate_features(df, cols, ids):
-    for _id in ids:
-        if isinstance(_id, list):
-            id_name = "_&_".join(_id)
+def create_aggregate_features(df, id_cols, cols):
+    for id_col in id_cols:
+        if isinstance(id_col, list):
+            id_name = "_&_".join(id_col)
         else:
-            id_name = _id
+            id_name = id_col
 
-        grouped = df.groupby(_id)
+        grouped = df.groupby(id_col)
 
         for col in cols:
             for agg_func_name, agg_func in agg_funcs.items():
@@ -88,22 +88,22 @@ def create_calendar_features(df, cols):
                 df[new_col] = getattr(df[col].dt, attr)
 
 
-def create_count_up_until_nonzero_features(df, cols, by):
-    grouped = df.groupby(by)
+def create_count_up_until_nonzero_features(df, id_col, cols):
+    grouped = df.groupby(id_col)
 
     for col in cols:
         new_col = count_up_until_nonzero_feature_format(col)
         df[new_col] = grouped[col].transform(count_up_until_nonzero)
 
 
-def create_ewm_features(df, cols, ids, windows):
-    for _id in ids:
-        if isinstance(_id, list):
-            id_name = "_&_".join(_id)
+def create_ewm_features(df, id_cols, cols, windows):
+    for id_col in id_cols:
+        if isinstance(id_col, list):
+            id_name = "_&_".join(id_col)
         else:
-            id_name = _id
+            id_name = id_col
 
-        grouped = df.groupby(_id)
+        grouped = df.groupby(id_col)
 
         for col in cols:
             for j in windows:
@@ -114,14 +114,14 @@ def create_ewm_features(df, cols, ids, windows):
                     )
 
 
-def create_expanding_features(df, cols, ids):
-    for _id in ids:
-        if isinstance(_id, list):
-            id_name = "_&_".join(_id)
+def create_expanding_features(df, id_cols, cols):
+    for id_col in id_cols:
+        if isinstance(id_col, list):
+            id_name = "_&_".join(id_col)
         else:
-            id_name = _id
+            id_name = id_col
 
-        grouped = df.groupby(_id)
+        grouped = df.groupby(id_col)
 
         for col in cols:
             for agg_func_name, agg_func in agg_funcs_for_expanding.items():
@@ -139,8 +139,8 @@ def create_expanding_features(df, cols, ids):
                     df[new_col] = feature.values
 
 
-def create_pct_change_features(df, cols, by, periods):
-    grouped = df.groupby(by)
+def create_pct_change_features(df, id_col, cols, periods):
+    grouped = df.groupby(id_col)
 
     for col in cols:
         for i in periods:
@@ -148,14 +148,14 @@ def create_pct_change_features(df, cols, by, periods):
             df[new_col] = grouped[col].pct_change(i)
 
 
-def create_rolling_features(df, cols, ids, windows, min_periods=None):
-    for _id in ids:
-        if isinstance(_id, list):
-            id_name = "_&_".join(_id)
+def create_rolling_features(df, id_cols, cols, windows, min_periods=None):
+    for id_col in id_cols:
+        if isinstance(id_col, list):
+            id_name = "_&_".join(id_col)
         else:
-            id_name = _id
+            id_name = id_col
 
-        grouped = df.groupby(_id)
+        grouped = df.groupby(id_col)
 
         for col in cols:
             for j in windows:
@@ -172,16 +172,16 @@ def create_rolling_features(df, cols, ids, windows, min_periods=None):
                     df[new_col] = feature.values
 
 
-def create_scaled_features(df, cols, by):
-    grouped = df.groupby(by)
+def create_scaled_features(df, id_col, cols):
+    grouped = df.groupby(id_col)
 
     for col in cols:
         new_col = scaled_feature_name_format(col)
         df[new_col] = df[col] / grouped[col].transform("max")
 
 
-def create_shift_features(df, cols, by, periods):
-    grouped = df.groupby(by)
+def create_shift_features(df, id_col, cols, periods):
+    grouped = df.groupby(id_col)
 
     for col in cols:
         for i in periods:
@@ -190,7 +190,7 @@ def create_shift_features(df, cols, by, periods):
 
 
 def create_days_since_release(df):
-    grouped = df.groupby(level_ids[11])
+    grouped = df.groupby(level_id_cols[11])
 
     is_not_selled = df["sell_price"].isnull()
     df["days_since_release"] = df["date"]

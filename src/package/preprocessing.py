@@ -49,10 +49,12 @@ def detrend(df):
     X = np.arange(train_days + 2 * test_days)
     X = X.reshape(-1, 1)
 
-    Y = df.pivot_table(columns=level_ids[11], dropna=False, index="date", values=target)
+    Y = df.pivot_table(
+        columns=level_id_cols[11], dropna=False, index="date", values=target
+    )
 
     is_selled = df.pivot_table(
-        columns=level_ids[11], dropna=False, index="date", values="sell_price"
+        columns=level_id_cols[11], dropna=False, index="date", values="sell_price"
     )
     is_selled = is_selled.notnull()
 
@@ -76,7 +78,7 @@ def detrend(df):
 
 
 def trim_outliers(df, low=None, high=0.99):
-    grouped = df.groupby(level_ids[11])
+    grouped = df.groupby(level_id_cols[11])
 
     trimmed_target = f"trimmed_{target}"
     is_not_selled = df["sell_price"].isnull()
