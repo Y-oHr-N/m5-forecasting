@@ -268,7 +268,7 @@ lgb_params = {
     "lambda_l2": 0.1,
     "learning_rate": 0.075,
     "metric": "rmse",
-    "min_data_in_leaf": 104,
+    "min_data_in_leaf": 1_000,
     "n_jobs": -1,
     "num_boost_round": 1_250,
     "num_leaves": 128,
