@@ -26,8 +26,8 @@ lgbm_clf_path = models_dir_path / "lgbm_clf.joblib"
 lgbm_reg_path = models_dir_path / "lgbm_reg.joblib"
 prediction_path = models_dir_path / "prediction.parquet"
 removed_features_path = models_dir_path / "removed_features.joblib"
-submission_accuracy_path = models_dir_path / f"submission_accuracy.csv.gz"
-submission_uncertainty_path = models_dir_path / f"submission_uncertainty.csv.gz"
+submission_accuracy_path = models_dir_path / "submission_accuracy.csv.gz"
+submission_uncertainty_path = models_dir_path / "submission_uncertainty.csv.gz"
 
 dtype = {
     "wm_yr_wk": "int16",
@@ -253,8 +253,7 @@ numerical_features = (
     + pct_change_features
     + rolling_features
     + scaled_features
-    + shift_features_online
-    + shift_features_batch
+    + shift_features
 )
 
 features = binary_features + categorical_features + numerical_features
