@@ -49,9 +49,7 @@ def detrend(df):
     X = np.arange(train_days + 2 * test_days)
     X = X.reshape(-1, 1)
 
-    Y = df.pivot_table(
-        columns=level_ids[11], dropna=False, index="date", values=target
-    )
+    Y = df.pivot_table(columns=level_ids[11], dropna=False, index="date", values=target)
 
     is_selled = df.pivot_table(
         columns=level_ids[11], dropna=False, index="date", values="sell_price"
