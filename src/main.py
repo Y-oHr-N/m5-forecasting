@@ -13,7 +13,7 @@ if sys.platform == "win32":
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument("-n", "--name", default="submission", help="name an experiment")
+parser.add_argument("-d", "--description", default="", help="describe an experiment")
 
 parser.add_argument(
     "-a", "--accuracy", action="store_true", help="submit to m5-forecasting-accuracy",
@@ -28,11 +28,11 @@ parser.add_argument(
 
 args = parser.parse_args()
 
-if args.name == "submission":
+if args.description:
+    work_dir_name = args.description
+else:
     now = datetime.datetime.now()
     work_dir_name = now.strftime("%Y_%m_%d_%H_%M_%S")
-else:
-    work_dir_name = args.name
 
 root_dir_path = pathlib.Path(".")
 notebooks_dir_path = root_dir_path / "notebooks"
@@ -59,5 +59,5 @@ for task in tasks:
     pm.execute_notebook(
         str(inputs_dir_path / (f"{task}.ipynb")),
         str(work_dir_path / (f"{task}.ipynb")),
-        parameters={"name": args.name, "src_dir": str(src_dir_path)},
+        parameters={"description": args.description, "src_dir": str(src_dir_path)},
     )
