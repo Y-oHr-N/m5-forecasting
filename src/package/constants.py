@@ -1,3 +1,34 @@
+import pathlib
+
+module_path = pathlib.Path(__file__)
+package_dir_path = module_path.parent
+src_dir_path = package_dir_path.parent
+root_dir_path = src_dir_path.parent
+
+data_dir_path = root_dir_path / "data"
+
+raw_dir_path = data_dir_path / "raw"
+calendar_path = raw_dir_path / "calendar.csv"
+sales_train_validation_path = raw_dir_path / "sales_train_validation.csv"
+sample_submission_path = raw_dir_path / "sample_submission.csv"
+sell_prices_path = raw_dir_path / "sell_prices.csv"
+
+interim_dir_path = data_dir_path / "interim"
+interim_path = interim_dir_path / "interim.parquet"
+
+processed_dir_path = data_dir_path / "processed"
+train_path = processed_dir_path / "train.parquet"
+
+models_dir_path = root_dir_path / "models"
+cb_reg_path = models_dir_path / "cb_reg.joblib"
+coef_path = models_dir_path / "coef.joblib"
+lgbm_clf_path = models_dir_path / "lgbm_clf.joblib"
+lgbm_reg_path = models_dir_path / "lgbm_reg.joblib"
+prediction_path = models_dir_path / "prediction.parquet"
+removed_features_path = models_dir_path / "removed_features.joblib"
+submission_accuracy_path = models_dir_path / f"submission_accuracy.csv.gz"
+submission_uncertainty_path = models_dir_path / f"submission_uncertainty.csv.gz"
+
 dtype = {
     "wm_yr_wk": "int16",
     "year": "int16",
