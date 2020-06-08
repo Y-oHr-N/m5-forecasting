@@ -173,6 +173,7 @@ max_lags = max(periods_online) + max(windows) - 1
 aggregate_feature_name_format = "groupby_{}_{}_{}".format
 calendar_feature_name_format = "{}_{}".format
 count_up_until_nonzero_feature_format = "{}_count_up_until_nonzero".format
+diff_feature_name_format = "{}_diff_{}".format
 expanding_feature_name_format = "groupby_{}_{}_expanding_{}".format
 ewm_feature_name_format = "groupby_{}_{}_ewm_{}_{}".format
 pct_change_feature_name_format = "{}_pct_change_{}".format

@@ -11,6 +11,7 @@ __all__ = [
     "create_aggregate_features",
     "create_calendar_features",
     "create_count_up_until_nonzero_features",
+    "create_diff_features",
     "create_ewm_features",
     "create_expanding_features",
     "create_pct_change_features",
@@ -94,6 +95,15 @@ def create_count_up_until_nonzero_features(df, by_col, cols):
     for col in cols:
         new_col = count_up_until_nonzero_feature_format(col)
         df[new_col] = grouped[col].transform(count_up_until_nonzero)
+
+
+def create_diff_features(df, by_col, cols, periods):
+    grouped = df.groupby(by_col)
+
+    for col in cols:
+        for i in periods:
+            new_col = diff_feature_name_format(col, i)
+            df[new_col] = grouped[col].diff(i)
 
 
 def create_ewm_features(df, by_cols, cols, windows):
