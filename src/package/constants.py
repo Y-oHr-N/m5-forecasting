@@ -18,7 +18,7 @@ interim_dir_path = data_dir_path / "interim"
 interim_path = interim_dir_path / "interim.parquet"
 
 processed_dir_path = data_dir_path / "processed"
-train_path = processed_dir_path / "train.parquet"
+train_path = interim_path
 
 models_dir_path = root_dir_path / "models"
 cb_reg_path = models_dir_path / "cb_reg.joblib"
