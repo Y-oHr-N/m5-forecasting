@@ -48,5 +48,9 @@ def reduce_memory_usage(df):
             c_min = df[col].min()
             c_max = df[col].max()
 
-            if c_min > np.finfo("float32").min and c_max < np.finfo("float32").max:
+            if (
+                np.isnan(c_min)
+                or c_min > np.finfo("float32").min
+                and c_max < np.finfo("float32").max
+            ):
                 df[col] = df[col].astype("float32")
