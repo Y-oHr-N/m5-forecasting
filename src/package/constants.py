@@ -10,6 +10,7 @@ data_dir_path = root_dir_path / "data"
 raw_dir_path = data_dir_path / "raw"
 calendar_path = raw_dir_path / "calendar.csv"
 sales_train_validation_path = raw_dir_path / "sales_train_validation.csv"
+sales_train_evaluation_path = raw_dir_path / "sales_train_evaluation.csv"
 sample_submission_path = raw_dir_path / "sample_submission.csv"
 sell_prices_path = raw_dir_path / "sell_prices.csv"
 
@@ -29,34 +30,13 @@ removed_features_path = models_dir_path / "removed_features.joblib"
 submission_accuracy_path = models_dir_path / "submission_accuracy.csv.gz"
 submission_uncertainty_path = models_dir_path / "submission_uncertainty.csv.gz"
 
-dtype = {
-    "wm_yr_wk": "int16",
-    "year": "int16",
-    "month": "int8",
-    "wday": "int8",
-    "event_name_1": "category",
-    "event_name_2": "category",
-    "event_type_1": "category",
-    "event_type_2": "category",
-    "snap_CA": "bool",
-    "snap_TX": "bool",
-    "snap_WI": "bool",
-    "state_id": "category",
-    "store_id": "category",
-    "cat_id": "category",
-    "dept_id": "category",
-    "item_id": "category",
-    "sell_price": "float32",
-}
-
-parse_dates = ["date"]
-
 train_days = 1913
 test_days = 28
 
 train_start_date = "2011-01-29"
-train_end_date = "2016-04-24"
 validation_start_date = "2016-03-28"
+train_end_date = "2016-04-24"
+test_start_date = "2016-04-25"
 
 chinese_new_year_dates = [
     "2011-02-03",
@@ -105,6 +85,31 @@ nba_finals_dates = [
     "2016-06-16",
     "2016-06-19",
 ]
+
+dtype = {
+    "wm_yr_wk": "int16",
+    "year": "int16",
+    "month": "int8",
+    "wday": "int8",
+    "event_name_1": "category",
+    "event_name_2": "category",
+    "event_type_1": "category",
+    "event_type_2": "category",
+    "snap_CA": "bool",
+    "snap_TX": "bool",
+    "snap_WI": "bool",
+    "state_id": "category",
+    "store_id": "category",
+    "cat_id": "category",
+    "dept_id": "category",
+    "item_id": "category",
+    "sell_price": "float32",
+}
+
+for i in range(1, train_days + 1):
+    dtype[f"d_{i}"] = "int16"
+
+parse_dates = ["date"]
 
 level_ids = [
     None,
