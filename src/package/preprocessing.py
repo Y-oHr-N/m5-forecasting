@@ -9,20 +9,28 @@ __all__ = [
     # General functions
     "add_gaussian_noise",
     "label_encode",
+    "trim_outliers",
     # Specidifc functions
     "detrend",
-    "trim_outliers",
 ]
 
 
-def clip_based_on_quantile(s, low=None, high=None):
+def clip_based_on_quantile(s, low="auto", high="auto"):
+    q1 = s.quantile(q=0.25)
+    q3 = s.quantile(q=0.75)
+    iqr = q3 - q1
+
     if low is None:
         lower = None
+    elif low == "auto":
+        lower = q1 - 1.5 * iqr
     else:
         lower = s.quantile(q=low)
 
     if high is None:
         upper = None
+    elif high == "auto":
+        upper = q3 + 1.5 * iqr
     else:
         upper = s.quantile(q=high)
 
@@ -41,6 +49,13 @@ def label_encode(df, cols):
     for col in cols:
         codes, _ = pd.factorize(df[col], sort=True)
         df[col] = codes
+
+
+def trim_outliers(df, by_col, cols, low="auto", high="auto"):
+    grouped = df.groupby(by_col)
+
+    for col in cols:
+        df[col] = grouped[col].apply(clip_based_on_quantile, low=low, high=high)
 
 
 def detrend(df):
@@ -73,17 +88,3 @@ def detrend(df):
 
     df["trend"] = tmp["trend"]
     df[f"detrended_{target}"] = df[target] - tmp["trend"]
-
-
-def trim_outliers(df, low=None, high=0.99):
-    grouped = df.groupby(level_ids[11])
-
-    trimmed_target = f"trimmed_{target}"
-    is_not_selled = df["sell_price"].isnull()
-
-    df[trimmed_target] = df[target]
-    df.loc[is_not_selled, trimmed_target] = np.nan
-
-    df[trimmed_target] = grouped[trimmed_target].apply(
-        clip_based_on_quantile, low=low, high=high
-    )
