@@ -124,9 +124,7 @@ class WRMSSEEvaluator(object):
 
         return np.mean(all_scores)
 
-
-class WRMSSEForLightGBM(WRMSSEEvaluator):
     def feval(self, preds, dtrain):
-        preds = preds.reshape(self.valid_df[self.valid_target_columns].shape)
-        score = self.score(preds)
-        return "WRMSSE", score, False
+        preds = preds.reshape(self.valid_df[self.valid_target_columns].shape, order="F")
+
+        return "wrmsse", self.score(preds), False
