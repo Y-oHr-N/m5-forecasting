@@ -288,6 +288,7 @@ lgb_params = {
     "bagging_fraction": 0.75,
     "bagging_freq": 1,
     "feature_fraction": 0.8,
+    "force_row_wise": True,
     "lambda_l2": 0.1,
     "learning_rate": 0.075,
     "metric": "rmse",
