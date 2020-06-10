@@ -11,6 +11,7 @@ __all__ = [
     "label_encode",
     "trim_outliers",
     # Specidifc functions
+    "create_ids",
     "detrend",
 ]
 
@@ -56,6 +57,17 @@ def trim_outliers(df, by_col, cols, low="auto", high="auto"):
 
     for col in cols:
         df[col] = grouped[col].apply(clip_based_on_quantile, low=low, high=high)
+
+
+def create_ids(df):
+    if "id" in df:
+        df[["item_id", "store_id"]] = df["id"].str.extract(
+            r"(\w+_\d+_\d+)_(\w+_\d+)_\w+"
+        )
+
+    df["dept_id"] = df["item_id"].str.extract(r"(\w+_\d+)_\d+")
+    df["cat_id"] = df["dept_id"].str.extract(r"(\w+)_\d+")
+    df["state_id"] = df["store_id"].str.extract(r"(\w+)_\d+")
 
 
 def detrend(df):
