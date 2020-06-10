@@ -256,9 +256,13 @@ def create_event_name(df):
     # See https://stackoverflow.com/questions/39638403/valueerror-cannot-use-inplace-with-categoricalindex
     # event_name_1.columns = event_name_1.columns.add_categories("ChineseNewYear")
     # event_name_1.columns = event_name_1.columns.add_categories("NBAFinals")
+    # event_name_1.columns = event_name_1.columns.add_categories("Pentecost")
+    # event_name_1.columns = event_name_1.columns.add_categories("OrthodoxPentecost")
 
     # event_name_1["ChineseNewYear"] = df["date"].isin(chinese_new_year_dates)
     # event_name_1["NBAFinals"] = df["date"].isin(nba_finals_dates)
+    # event_name_1["Pentecost"] = df["date"].isin(pentecost_dates)
+    # event_name_1["OrthodoxPentecost"] = df["date"].isin(orthodox_pentecost_dates)
 
     event_name_1 = event_name_1.astype("str")
     df["event_name"] = event_name_1.apply(lambda s: "".join(s), axis=1)
@@ -273,8 +277,12 @@ def create_event_type(df):
 
     # is_chinese_new_year = df["date"].isin(chinese_new_year_dates)
     # is_nba_finals = df["date"].isin(nba_finals_dates)
+    # is_pentecost = df["date"].isin(pentecost_dates)
+    # is_orthodox_pentecost = df["date"].isin(orthodox_pentecost_dates)
     # event_type_1.loc[is_chinese_new_year, "Religious"] = 1
     # event_type_1.loc[is_nba_finals, "Sporting"] = 1
+    # event_type_1.loc[is_pentecost, "Cultural"] = 1
+    # event_type_1.loc[is_orthodox_pentecost, "Religious"] = 1
 
     event_type_1 = event_type_1.astype("str")
     df["event_type"] = event_type_1.apply(lambda s: "".join(s), axis=1)
