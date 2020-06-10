@@ -71,11 +71,12 @@ def create_aggregate_features(df, by_cols, cols):
 
         grouped = df.groupby(by_col)
 
-        for col in cols:
-            for agg_func_name, agg_func in agg_funcs.items():
-                df[f"groupby_{id_name}_{col}_{agg_func_name}"] = grouped[col].transform(
-                    agg_func
-                )
+        for agg_func_name, agg_func in agg_funcs.items():
+            new_cols = [
+                aggregate_feature_name_format(id_name, col, agg_func_name)
+                for col in cols
+            ]
+            df[new_cols] = grouped[cols].transform(agg_func)
 
 
 def create_calendar_features(df, cols):
@@ -100,10 +101,9 @@ def create_count_up_until_nonzero_features(df, by_col, cols):
 def create_diff_features(df, by_col, cols, periods):
     grouped = df.groupby(by_col)
 
-    for col in cols:
-        for i in periods:
-            new_col = diff_feature_name_format(col, i)
-            df[new_col] = grouped[col].diff(i)
+    for i in periods:
+        new_cols = [diff_feature_name_format(col, i) for col in cols]
+        df[new_cols] = grouped[cols].diff(i)
 
 
 def create_ewm_features(df, by_cols, cols, windows):
@@ -152,10 +152,9 @@ def create_expanding_features(df, by_cols, cols):
 def create_pct_change_features(df, by_col, cols, periods):
     grouped = df.groupby(by_col)
 
-    for col in cols:
-        for i in periods:
-            new_col = pct_change_feature_name_format(col, i)
-            df[new_col] = grouped[col].pct_change(i)
+    for i in periods:
+        new_cols = [pct_change_feature_name_format(col, i) for col in cols]
+        df[new_cols] = grouped[cols].pct_change(i)
 
 
 def create_rolling_features(df, by_cols, cols, windows, min_periods=None):
@@ -191,18 +190,16 @@ def create_scaled_features(df, by_cols, cols):
 
         grouped = df.groupby(by_col)
 
-        for col in cols:
-            new_col = scaled_feature_name_format(id_name, col)
-            df[new_col] = df[col] / grouped[col].transform("max")
+        new_cols = [scaled_feature_name_format(id_name, col) for col in cols]
+        df[new_cols] = df[cols] / grouped[cols].transform("max")
 
 
 def create_shift_features(df, by_col, cols, periods):
     grouped = df.groupby(by_col)
 
-    for col in cols:
-        for i in periods:
-            new_col = shift_feature_name_format(col, i)
-            df[new_col] = grouped[col].shift(i)
+    for i in periods:
+        new_cols = [shift_feature_name_format(col, i) for col in cols]
+        df[new_cols] = grouped[cols].shift(i)
 
 
 def create_days_since_release(df):
