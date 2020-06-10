@@ -300,3 +300,5 @@ lgb_params = {
     "seed": random_state,
     "tweedie_variance_power": 1.2,
 }
+
+magic_multiplier = 1.024
