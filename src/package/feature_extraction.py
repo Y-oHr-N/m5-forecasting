@@ -144,9 +144,9 @@ def create_expanding_features(df, by_cols, cols):
                 else:
                     feature = grouped[col].expanding().aggregate(agg_func)
 
-                    feature.sort_index(level=-1, inplace=True)
+                    feature.reset_index(drop=True, inplace=True, level=by_col)
 
-                    df[new_col] = feature.values
+                    df[new_col] = feature
 
 
 def create_pct_change_features(df, by_col, cols, periods):
@@ -176,9 +176,9 @@ def create_rolling_features(df, by_cols, cols, windows, min_periods=None):
                     )
                     feature = rolling.aggregate(agg_func)
 
-                    feature.sort_index(level=-1, inplace=True)
+                    feature.reset_index(drop=True, inplace=True, level=by_col)
 
-                    df[new_col] = feature.values
+                    df[new_col] = feature
 
 
 def create_scaled_features(df, by_cols, cols):
