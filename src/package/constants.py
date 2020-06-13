@@ -333,7 +333,7 @@ lgb_params = {
     "metric": "rmse",
     "min_data_in_leaf": 1_000,
     "n_jobs": -1,
-    "num_boost_round": 1_250,
+    "num_boost_round": 1_200,
     "num_leaves": 128,
     "objective": "tweedie",
     "seed": random_state,
