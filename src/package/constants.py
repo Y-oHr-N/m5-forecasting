@@ -340,4 +340,4 @@ lgb_params = {
     "tweedie_variance_power": 1.2,
 }
 
-magic_multiplier = 1.024
+magic_multiplier = 1.023
