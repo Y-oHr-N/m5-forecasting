@@ -30,6 +30,10 @@ prediction_path = models_dir_path / "prediction.parquet"
 submission_accuracy_path = models_dir_path / "submission_accuracy.csv.gz"
 submission_uncertainty_path = models_dir_path / "submission_uncertainty.csv.gz"
 
+notebooks_dir_path = root_dir_path / "notebooks"
+inputs_dir_path = notebooks_dir_path / "inputs"
+outputs_dir_path = notebooks_dir_path / "outputs"
+
 train_days = 1913
 test_days = 28
 
