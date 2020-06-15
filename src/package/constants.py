@@ -166,7 +166,7 @@ dtype = {
     "cat_id": "category",
     "dept_id": "category",
     "item_id": "category",
-    "sell_price": "float32",
+    "sell_price": "float16",
 }
 
 for i in range(1, train_days + 1):
