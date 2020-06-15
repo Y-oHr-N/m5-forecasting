@@ -22,6 +22,7 @@ def load_interim():
         value_name=target,
     )
 
+    interim_dir_path.mkdir(parents=True, exist_ok=True)
     interim.to_parquet(interim_path)
 
     return interim
