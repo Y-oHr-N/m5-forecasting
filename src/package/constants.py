@@ -184,7 +184,7 @@ level_ids = [
 ]
 
 target = "sales"
-transformed_target = "dollar_sales"
+transformed_target = "revenue"
 
 attrs = [
     "year",
