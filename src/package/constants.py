@@ -38,9 +38,11 @@ train_days = 1913
 test_days = 28
 
 train_start_date = "2011-01-29"
-validation_start_date = "2016-03-28"
 train_end_date = "2016-04-24"
-test_start_date = "2016-04-25"
+validation_start_date = "2016-04-25"
+validation_end_date = "2016-05-22"
+evaluation_start_date = "2016-05-23"
+evaluation_end_date = "2016-06-19"
 
 events = [
     # {
@@ -312,8 +314,8 @@ rolling_features = [
 ]
 
 numerical_features = (
-    raw_numerical_features
-    + ["days_since_release"]
+    ["days_since_release"]
+    + raw_numerical_features
     + aggregate_features
     + calendar_features
     + expanding_features
