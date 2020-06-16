@@ -68,7 +68,7 @@ class WRMSSEEvaluator(object):
             setattr(self, f"lv{i + 1}_weight", lv_weight / lv_weight.sum())
 
     def get_weight_df(self):
-        calndar = pd.read_csv(calendar_path)
+        calendar = pd.read_csv(calendar_path)
         sell_prices = pd.read_csv(sell_prices_path)
         day_to_week = calendar.set_index("d")["wm_yr_wk"].to_dict()
         weight_df = self.train_df[
