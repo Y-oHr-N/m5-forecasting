@@ -254,8 +254,10 @@ def create_event_name(df):
         event_name_1.columns = event_name_1.columns.add_categories(event["event_name"])
         event_name_1[event["event_name"]] = df["date"].isin(event["dates"])
 
-    event_name_1 = event_name_1.astype("str")
-    df["event_name"] = event_name_1.apply(lambda s: "".join(s), axis=1)
+    _, n_event_names = event_name_1.shape
+    tmp = 2 ** np.arange(n_event_names)
+
+    df["event_name"] = event_name_1 @ tmp[::-1]
 
 
 def create_event_type(df):
@@ -269,8 +271,10 @@ def create_event_type(df):
         is_event = df["date"].isin(event["dates"])
         event_type_1.loc[is_event, event["event_type"]] = 1
 
-    event_type_1 = event_type_1.astype("str")
-    df["event_type"] = event_type_1.apply(lambda s: "".join(s), axis=1)
+    _, n_event_types = event_type_1.shape
+    tmp = 2 ** np.arange(n_event_types)
+
+    df["event_type"] = event_type_1 @ tmp[::-1]
 
 
 def create_is_working_day(df):
