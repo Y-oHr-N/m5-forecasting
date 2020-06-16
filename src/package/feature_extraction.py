@@ -202,15 +202,19 @@ def create_shift_features(df, by_col, cols, periods):
         df[new_cols] = grouped[cols].shift(i)
 
 
-def create_days_since_release(df):
+def create_days_since_release(df, offset=0):
     grouped = df.groupby(level_ids[11])
 
     is_not_selled = df["sell_price"].isnull()
     df["days_since_release"] = df["date"]
     df.loc[is_not_selled, "days_since_release"] = np.nan
 
-    df["days_since_release"] = grouped["days_since_release"].transform("min")
-    df["days_since_release"] = (df["date"] - df["days_since_release"]).dt.days
+    tmp = grouped["days_since_release"].transform("min")
+    df["days_since_release"] = (df["date"] - tmp).dt.days
+
+    if offset > 0:
+        is_oldest = tmp == train_start_date
+        df.loc[is_oldest, "days_since_release"] += offset
 
 
 def create_days_until_event(df):
