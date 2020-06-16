@@ -30,7 +30,7 @@ def create_exponential_sample_weight(df, date_col, denom=1):
     df["sample_weight"] = (1 - alpha) ** (span - elapsed_time - 1)
 
 
-def reduce_memory_usage(df):
+def reduce_memory_usage(df, allow_float16=True):
     for col in df.columns:
         col_type = df[col].dtype
 
@@ -44,13 +44,34 @@ def reduce_memory_usage(df):
 
         col_type = df[col].dtype
 
-        if col_type in ["float16", "float32", "float64"]:
+        if col_type == "float16":
+            if not allow_float16:
+                df[col] = df[col].astype("float32")
+
+        elif col_type == "float32":
+            if allow_float16:
+                c_min = df[col].min()
+                c_max = df[col].max()
+
+                if (
+                    np.isnan(c_min)
+                    or c_min > np.finfo("float16").min
+                    and c_max < np.finfo("float16").max
+                ):
+                    df[col] = df[col].astype("float16")
+
+        elif col_type == "float64":
             c_min = df[col].min()
             c_max = df[col].max()
 
             if (
                 np.isnan(c_min)
-                or c_min > np.finfo("float32").min
-                and c_max < np.finfo("float32").max
+                or c_min > np.finfo("float16").min
+                and c_max < np.finfo("float16").max
             ):
+                if allow_float16:
+                    df[col] = df[col].astype("float16")
+                else:
+                    df[col] = df[col].astype("float32")
+            elif c_min > np.finfo("float32").min and c_max < np.finfo("float32").max:
                 df[col] = df[col].astype("float32")
