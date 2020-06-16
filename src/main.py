@@ -45,7 +45,6 @@ work_dir_path = outputs_dir_path / work_dir
 work_dir_path.mkdir(exist_ok=True, parents=True)
 
 tasks = [
-    "preprocess",
     "train_lgbm_reg",
     "predict",
 ]
