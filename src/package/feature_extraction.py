@@ -1,3 +1,6 @@
+import datetime
+import decimal
+
 import numpy as np
 import pandas as pd
 from workalendar.usa import California
@@ -25,6 +28,7 @@ __all__ = [
     "create_event_name",
     "create_event_type",
     "create_is_working_day",
+    "create_moon_phase",
     "create_nearest_event_name",
     "create_nearest_event_type",
     "create_sell_price_ending",
@@ -54,6 +58,20 @@ def count_down_until_nonzero(s):
     out = count_up_until_nonzero(s.iloc[::-1])
 
     return out[::-1]
+
+
+def moon_phase(dt):
+    diff = dt - datetime.datetime(2001, 1, 1)
+    days = decimal.Decimal(diff.days) + (
+        decimal.Decimal(diff.seconds) / decimal.Decimal(86400)
+    )
+    lunations = decimal.Decimal("0.20439731") + (
+        days * decimal.Decimal("0.03386319269")
+    )
+    position = lunations % decimal.Decimal(1)
+    index = np.floor((position * decimal.Decimal(8)) + decimal.Decimal("0.5"))
+
+    return int(index) % 8
 
 
 def weekofmonth(dt):
@@ -303,6 +321,10 @@ def create_is_working_day(df):
 
     tmp = df[on].merge(tmp, copy=False, on=on)
     df["is_working_day"] = tmp["is_working_day"]
+
+
+def create_moon_phase(df):
+    df["moon_phase"] = df["date"].apply(moon_phase)
 
 
 def create_nearest_event_name(df, limit=None):
