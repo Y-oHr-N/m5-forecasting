@@ -5,7 +5,7 @@ from .constants import *
 
 
 class WRMSSEEvaluator(object):
-    def __init__(self, train_df, valid_df):
+    def __init__(self, train_df, valid_df, target_transform=False):
         train_y = train_df.loc[:, train_df.columns.str.startswith("d_")]
         train_target_columns = train_y.columns.tolist()
         weight_columns = train_y.iloc[:, -test_days:].columns.tolist()
@@ -24,6 +24,7 @@ class WRMSSEEvaluator(object):
 
         self.train_df = train_df
         self.valid_df = valid_df
+        self.target_transform = target_transform
 
         self.weight_columns = weight_columns
         self.id_columns = id_columns
@@ -124,6 +125,9 @@ class WRMSSEEvaluator(object):
         return np.mean(all_scores)
 
     def feval(self, preds, dtrain):
+        if self.target_transform:
+            preds /= dtrain.get_weight()
+
         preds = preds.reshape(self.valid_df[self.valid_target_columns].shape, order="F")
 
         return "wrmsse", self.score(preds), False
