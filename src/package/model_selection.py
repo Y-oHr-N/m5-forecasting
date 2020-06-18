@@ -6,7 +6,7 @@ __all__ = ["Folds"]
 
 
 class Folds(object):
-    def __init__(self, s, n_folds=5, period=test_days):
+    def __init__(self, s, n_folds=5, period=evaluation_days):
         self.s = s
         self.n_folds = n_folds
         self.period = period

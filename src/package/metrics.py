@@ -8,7 +8,7 @@ class WRMSSEEvaluator(object):
     def __init__(self, train_df, valid_df, target_transform=False):
         train_y = train_df.loc[:, train_df.columns.str.startswith("d_")]
         train_target_columns = train_y.columns.tolist()
-        weight_columns = train_y.iloc[:, -test_days:].columns.tolist()
+        weight_columns = train_y.iloc[:, -evaluation_days:].columns.tolist()
 
         train_df["all_id"] = 0  # for lv1 aggregation
 

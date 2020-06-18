@@ -19,7 +19,10 @@ def load_interim(overwrite=False):
     sales_train_evaluation = pd.read_csv(sales_train_evaluation_path, dtype=dtype)
     sell_prices = pd.read_csv(sell_prices_path, dtype=dtype)
 
-    for i in range(train_days + test_days + 1, train_days + 2 * test_days + 1):
+    for i in range(
+        train_days + validation_days + 1,
+        train_days + validation_days + evaluation_days + 1,
+    ):
         sales_train_evaluation[f"d_{i}"] = np.nan
 
     interim = sales_train_evaluation.melt(
