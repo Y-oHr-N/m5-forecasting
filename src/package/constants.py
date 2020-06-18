@@ -35,8 +35,7 @@ inputs_dir_path = notebooks_dir_path / "inputs"
 outputs_dir_path = notebooks_dir_path / "outputs"
 
 train_days = 1913
-validation_days = 28
-evaluation_days = validation_days
+evaluation_days = 28
 
 train_start_date = "2011-01-29"
 train_end_date = "2016-04-24"

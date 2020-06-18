@@ -73,7 +73,7 @@ def create_ids(df):
 def detrend(df):
     model = LinearRegression()
 
-    X = np.arange(train_days + validation_days + evaluation_days)
+    X = np.arange(train_days + 2 * evaluation_days)
     X = X.reshape(-1, 1)
 
     Y = df.pivot_table(columns=level_ids[11], dropna=False, index="date", values=target)
