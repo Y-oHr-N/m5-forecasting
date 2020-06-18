@@ -16,13 +16,13 @@ def load_interim(overwrite=False):
     interim_dir_path.mkdir(parents=True, exist_ok=True)
 
     calendar = pd.read_csv(calendar_path, dtype=dtype, parse_dates=parse_dates)
-    sales_train_validation = pd.read_csv(sales_train_validation_path, dtype=dtype)
+    sales_train_evaluation = pd.read_csv(sales_train_evaluation_path, dtype=dtype)
     sell_prices = pd.read_csv(sell_prices_path, dtype=dtype)
 
-    for i in range(train_days + 1, train_days + 1 + 2 * test_days):
-        sales_train_validation[f"d_{i}"] = np.nan
+    for i in range(train_days + test_days + 1, train_days + 2 * test_days + 1):
+        sales_train_evaluation[f"d_{i}"] = np.nan
 
-    interim = sales_train_validation.melt(
+    interim = sales_train_evaluation.melt(
         id_vars=["id", "item_id", "store_id", "dept_id", "cat_id", "state_id"],
         var_name="d",
         value_name=target,
