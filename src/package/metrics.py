@@ -3,6 +3,8 @@ import pandas as pd
 
 from .constants import *
 
+__all__ = ["WRMSSEEvaluator"]
+
 
 class WRMSSEEvaluator(object):
     def __init__(self, train_df, valid_df, target_transform=False):
