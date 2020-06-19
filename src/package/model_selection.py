@@ -11,7 +11,7 @@ class Folds(object):
         self.n_folds = n_folds
         self.period = period
 
-        self.i = n_folds - 1
+        self.i = 0
         self.date_min = s.min()
         self.date_max = s.max()
         self.offset = np.timedelta64(period, "D")
@@ -20,17 +20,17 @@ class Folds(object):
         return self
 
     def __next__(self):
-        if self.i < 0:
+        if self.i == self.n_folds:
             raise StopIteration()
 
-        train_end_date = self.date_max - (self.i + 1) * self.offset
-        test_end_date = self.date_max - self.i * self.offset
+        train_end_date = self.date_max - (self.n_folds - self.i) * self.offset
+        test_end_date = self.date_max - (self.n_folds - self.i - 1) * self.offset
 
         train_index = (self.date_min <= self.s) & (self.s <= train_end_date)
         train_index = np.where(train_index)[0]
         test_index = (train_end_date < self.s) & (self.s <= test_end_date)
         test_index = np.where(test_index)[0]
 
-        self.i -= 1
+        self.i += 1
 
         return train_index, test_index
