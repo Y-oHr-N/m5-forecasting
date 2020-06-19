@@ -51,6 +51,10 @@ def load_processed(overwrite=False):
 
     interim = load_interim(overwrite=overwrite)
 
+    interim.dropna(inplace=True, subset=raw_numerical_features)
+
+    trim_outliers(interim, level_ids[11], raw_numerical_features, low=None)
+
     # Extract features
     create_aggregate_features(interim, level_ids[1:11], raw_numerical_features)
     create_calendar_features(interim, parse_dates)
@@ -68,6 +72,8 @@ def load_processed(overwrite=False):
 
     # Transform target
     interim[transformed_target] = interim[target] * interim["sell_price"]
+
+    interim.reset_index(drop=True, inplace=True)
 
     interim.drop(
         columns=[
