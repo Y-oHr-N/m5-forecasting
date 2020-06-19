@@ -7,7 +7,13 @@ __all__ = ["WRMSSEEvaluator"]
 
 
 class WRMSSEEvaluator(object):
-    def __init__(self, train_df, valid_df, target_transform=False):
+    def __init__(self, validation_start, target_transform=False):
+        sales_train_evaluation = pd.read_csv(sales_train_evaluation_path)
+        train_df = sales_train_evaluation.iloc[:, : 5 + validation_start]
+        valid_df = sales_train_evaluation.iloc[
+            :, 5 + validation_start : 5 + validation_start + evaluation_days
+        ]
+
         train_y = train_df.loc[:, train_df.columns.str.startswith("d_")]
         train_target_columns = train_y.columns.tolist()
         weight_columns = train_y.iloc[:, -evaluation_days:].columns.tolist()
@@ -130,6 +136,6 @@ class WRMSSEEvaluator(object):
         if self.target_transform:
             preds /= dtrain.get_weight()
 
-        preds = preds.reshape(self.valid_df[self.valid_target_columns].shape, order="F")
+        preds = preds.reshape((-1, evaluation_days), order="F")
 
         return "wrmsse", self.score(preds), False
