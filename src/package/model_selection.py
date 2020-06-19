@@ -24,12 +24,11 @@ class Folds(object):
             raise StopIteration()
 
         train_end_date = self.date_max - (self.i + 1) * self.offset
-        test_start_date = self.date_max - ((self.i + 1) * self.offset - 1)
         test_end_date = self.date_max - self.i * self.offset
 
         train_index = (self.date_min <= self.s) & (self.s <= train_end_date)
         train_index = np.where(train_index)[0]
-        test_index = (test_start_date <= self.s) & (self.s <= test_end_date)
+        test_index = (train_end_date < self.s) & (self.s <= test_end_date)
         test_index = np.where(test_index)[0]
 
         self.i -= 1
