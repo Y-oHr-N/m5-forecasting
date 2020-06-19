@@ -49,7 +49,7 @@ def load_processed(overwrite=False):
 
     processed_dir_path.mkdir(parents=True, exist_ok=True)
 
-    interim = load_interim()
+    interim = load_interim(overwrite=overwrite)
 
     # Extract features
     create_aggregate_features(interim, level_ids[1:11], raw_numerical_features)
