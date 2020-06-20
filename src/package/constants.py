@@ -230,7 +230,7 @@ agg_funcs_for_rolling = {
 periods_batch = [28]
 periods_online = [7]
 periods = periods_online + periods_batch
-windows = [7, 28]
+windows = [7, 14, 28, 56]
 max_lags = max(periods_online) + max(windows) - 1
 
 aggregate_feature_name_format = "groupby_{}_{}_{}".format
