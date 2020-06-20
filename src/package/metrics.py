@@ -7,56 +7,60 @@ __all__ = ["WRMSSEEvaluator"]
 
 
 class WRMSSEEvaluator(object):
-    def __init__(self, validation_start, target_transform=False):
+    def __init__(self, valid_start_d, weight_start_d=None, target_transform=False):
+        calendar = pd.read_csv(calendar_path)
         sales_train_evaluation = pd.read_csv(sales_train_evaluation_path)
-        train_df = sales_train_evaluation.iloc[:, : 5 + validation_start]
-        valid_df = sales_train_evaluation.iloc[
-            :, 5 + validation_start : 5 + validation_start + evaluation_days
-        ]
+        sell_prices = pd.read_csv(sell_prices_path)
 
-        train_y = train_df.loc[:, train_df.columns.str.startswith("d_")]
-        train_target_columns = train_y.columns.tolist()
-        weight_columns = train_y.iloc[:, -evaluation_days:].columns.tolist()
+        sales_train_evaluation.insert(0, "all_id", 0)
 
-        train_df["all_id"] = 0  # for lv1 aggregation
+        if weight_start_d is None:
+            weight_start_d = valid_start_d - evaluation_days
 
-        id_columns = train_df.loc[
-            :, ~train_df.columns.str.startswith("d_")
-        ].columns.tolist()
-        valid_target_columns = valid_df.loc[
-            :, valid_df.columns.str.startswith("d_")
-        ].columns.tolist()
+        train_start = 7
+        valid_start = train_start + valid_start_d - 1
+        weight_start = train_start + weight_start_d - 1
 
-        if not all([c in valid_df.columns for c in id_columns]):
-            valid_df = pd.concat([train_df[id_columns], valid_df], axis=1, sort=False)
+        id_columns = sales_train_evaluation.columns[:train_start].tolist()
+        train_columns = sales_train_evaluation.columns[train_start:valid_start].tolist()
+        valid_columns = sales_train_evaluation.columns[
+            valid_start : valid_start + evaluation_days
+        ].tolist()
+        weight_columns = sales_train_evaluation.columns[
+            weight_start : weight_start + evaluation_days
+        ].tolist()
 
-        self.train_df = train_df
-        self.valid_df = valid_df
+        id_df = sales_train_evaluation[id_columns]
+        train_df = sales_train_evaluation[id_columns + train_columns]
+        valid_df = sales_train_evaluation[id_columns + valid_columns]
+
         self.target_transform = target_transform
+        self.id_df = id_df
+        self.valid_columns = valid_columns
 
-        self.weight_columns = weight_columns
-        self.id_columns = id_columns
-        self.valid_target_columns = valid_target_columns
-
-        weight_df = self.get_weight_df()
-
-        self.group_ids = (
-            "all_id",
-            "state_id",
-            "store_id",
-            "cat_id",
-            "dept_id",
-            ["state_id", "cat_id"],
-            ["state_id", "dept_id"],
-            ["store_id", "cat_id"],
-            ["store_id", "dept_id"],
-            "item_id",
-            ["item_id", "state_id"],
-            ["item_id", "store_id"],
+        day_to_week = calendar.set_index("d")["wm_yr_wk"].to_dict()
+        weight_df = sales_train_evaluation[
+            ["item_id", "store_id"] + weight_columns
+        ].set_index(["item_id", "store_id"])
+        weight_df = (
+            weight_df.stack().reset_index().rename(columns={"level_2": "d", 0: target})
         )
+        weight_df["wm_yr_wk"] = weight_df["d"].map(day_to_week)
 
-        for i, group_id in enumerate(self.group_ids):
-            train_y = train_df.groupby(group_id)[train_target_columns].sum()
+        weight_df = weight_df.merge(
+            sell_prices, copy=False, how="left", on=["item_id", "store_id", "wm_yr_wk"]
+        )
+        weight_df[target] = weight_df[target] * weight_df["sell_price"]
+        weight_df = weight_df.set_index(["item_id", "store_id", "d"]).unstack(level=2)[
+            target
+        ]
+        weight_df = weight_df.loc[
+            zip(train_df.item_id, train_df.store_id), :
+        ].reset_index(drop=True)
+        weight_df = pd.concat([id_df, weight_df], axis=1, sort=False)
+
+        for i, level_id in enumerate(level_ids):
+            train_y = train_df.groupby(level_id)[train_columns].sum()
             scale = []
 
             for _, row in train_y.iterrows():
@@ -64,71 +68,40 @@ class WRMSSEEvaluator(object):
 
                 scale.append(((series[1:] - series[:-1]) ** 2).mean())
 
-            setattr(self, f"lv{i + 1}_scale", np.array(scale))
-            setattr(self, f"lv{i + 1}_train_df", train_y)
+            setattr(self, f"level_{i + 1}_scale", np.array(scale))
             setattr(
                 self,
-                f"lv{i + 1}_valid_df",
-                valid_df.groupby(group_id)[valid_target_columns].sum(),
+                f"level_{i + 1}_valid_df",
+                valid_df.groupby(level_id)[valid_columns].sum(),
             )
 
-            lv_weight = weight_df.groupby(group_id)[weight_columns].sum().sum(axis=1)
+            level_weight = weight_df.groupby(level_id)[weight_columns].sum().sum(axis=1)
 
-            setattr(self, f"lv{i + 1}_weight", lv_weight / lv_weight.sum())
+            setattr(self, f"level_{i + 1}_weight", level_weight / level_weight.sum())
 
-    def get_weight_df(self):
-        calendar = pd.read_csv(calendar_path)
-        sell_prices = pd.read_csv(sell_prices_path)
-        day_to_week = calendar.set_index("d")["wm_yr_wk"].to_dict()
-        weight_df = self.train_df[
-            ["item_id", "store_id"] + self.weight_columns
-        ].set_index(["item_id", "store_id"])
-        weight_df = (
-            weight_df.stack().reset_index().rename(columns={"level_2": "d", 0: "value"})
-        )
-        weight_df["wm_yr_wk"] = weight_df["d"].map(day_to_week)
-
-        weight_df = weight_df.merge(
-            sell_prices, how="left", on=["item_id", "store_id", "wm_yr_wk"]
-        )
-        weight_df["value"] = weight_df["value"] * weight_df["sell_price"]
-        weight_df = weight_df.set_index(["item_id", "store_id", "d"]).unstack(level=2)[
-            "value"
-        ]
-        weight_df = weight_df.loc[
-            zip(self.train_df.item_id, self.train_df.store_id), :
-        ].reset_index(drop=True)
-        weight_df = pd.concat(
-            [self.train_df[self.id_columns], weight_df], axis=1, sort=False
-        )
-
-        return weight_df
-
-    def rmsse(self, valid_preds, lv):
-        valid_y = getattr(self, f"lv{lv}_valid_df")
+    def rmsse(self, valid_preds, level):
+        valid_y = getattr(self, f"level_{level}_valid_df")
         score = ((valid_y - valid_preds) ** 2).mean(axis=1)
-        scale = getattr(self, f"lv{lv}_scale")
+        scale = getattr(self, f"level_{level}_scale")
 
         return (score / scale).map(np.sqrt)
 
     def score(self, valid_preds):
-        if isinstance(valid_preds, np.ndarray):
-            valid_preds = pd.DataFrame(valid_preds, columns=self.valid_target_columns)
-
-        valid_preds = pd.concat(
-            [self.valid_df[self.id_columns], valid_preds], axis=1, sort=False
-        )
+        valid_preds = pd.DataFrame(valid_preds, columns=self.valid_columns)
+        valid_preds = pd.concat([self.id_df, valid_preds], axis=1, sort=False)
 
         all_scores = []
 
-        for i, group_id in enumerate(self.group_ids):
-            lv_scores = self.rmsse(
-                valid_preds.groupby(group_id)[self.valid_target_columns].sum(), i + 1
+        for i, level_id in enumerate(level_ids):
+            level_scores = self.rmsse(
+                valid_preds.groupby(level_id)[self.valid_columns].sum(), i + 1
             )
-            weight = getattr(self, f"lv{i + 1}_weight")
-            lv_scores = pd.concat([weight, lv_scores], axis=1, sort=False).prod(axis=1)
+            weight = getattr(self, f"level_{i + 1}_weight")
+            level_scores = pd.concat([weight, level_scores], axis=1, sort=False).prod(
+                axis=1
+            )
 
-            all_scores.append(lv_scores.sum())
+            all_scores.append(level_scores.sum())
 
         return np.mean(all_scores)
 

@@ -175,7 +175,7 @@ for i in range(1, train_days + 1):
 parse_dates = ["date"]
 
 level_ids = [
-    None,
+    "all_id",
     "state_id",
     "store_id",
     "cat_id",
