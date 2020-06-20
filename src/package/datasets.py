@@ -62,7 +62,9 @@ def load_processed(overwrite=False):
     create_pct_change_features(interim, level_ids[11], raw_numerical_features, periods)
     create_scaled_features(interim, level_ids[11:], raw_numerical_features)
     create_shift_features(interim, level_ids[11], [target], periods)
-    create_rolling_features(interim, level_ids[11:], shift_features, windows)
+    create_rolling_features(
+        interim, level_ids[11:], shift_features, windows, min_periods=1
+    )
     create_days_since_release(interim)
     create_event_name(interim)
     create_event_type(interim)
