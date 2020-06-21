@@ -207,7 +207,7 @@ agg_funcs = {
     # "min": "min",
     # "max": "max",
     "mean": "mean",
-    # "std": "std",
+    "std": "std",
     # "nunique": "nunique",
 }
 agg_funcs_for_ewm = {
