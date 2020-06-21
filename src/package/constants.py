@@ -255,8 +255,10 @@ categorical_features = [
     "cat_id",
     "dept_id",
     "item_id",
-    "event_name",
-    "event_type",
+    "event_name_1",
+    "event_name_2",
+    "event_type_1",
+    "event_type_2",
 ]
 
 raw_numerical_features = ["sell_price"]

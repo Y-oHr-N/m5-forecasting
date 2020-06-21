@@ -66,8 +66,6 @@ def load_processed(overwrite=False):
         interim, level_ids[11:], shift_features, windows, min_periods=1
     )
     create_days_since_release(interim)
-    create_event_name(interim)
-    create_event_type(interim)
     create_is_working_day(interim)
     create_snap(interim)
     label_encode(interim, categorical_features)
@@ -79,10 +77,6 @@ def load_processed(overwrite=False):
 
     interim.drop(
         columns=[
-            "event_name_1",
-            "event_name_2",
-            "event_type_1",
-            "event_type_2",
             "month",
             "snap_CA",
             "snap_TX",
