@@ -19,8 +19,13 @@ class Folds(object):
     def __iter__(self):
         return self
 
+    def __len__(self):
+        return self.n_folds
+
     def __next__(self):
         if self.i == self.n_folds:
+            self.i = 0
+
             raise StopIteration()
 
         train_end_date = self.date_max - (self.n_folds - self.i) * self.offset
