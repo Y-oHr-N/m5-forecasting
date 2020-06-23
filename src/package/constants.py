@@ -175,21 +175,23 @@ for i in range(1, train_days + 1):
 parse_dates = ["date"]
 
 level_ids = [
-    "all_id",
-    "state_id",
-    "store_id",
-    "cat_id",
-    "dept_id",
+    ["all_id"],
+    ["state_id"],
+    ["store_id"],
+    ["cat_id"],
+    ["dept_id"],
     ["state_id", "cat_id"],
     ["state_id", "dept_id"],
     ["store_id", "cat_id"],
     ["store_id", "dept_id"],
-    "item_id",
+    ["item_id"],
     ["item_id", "state_id"],
     ["item_id", "store_id"],
 ]
 
-target = "sales"
+level_targets = [f"level_{i + 1}_sales" for i in range(12)]
+
+target = level_targets[-1]
 transformed_target = "revenue"
 
 attrs = [

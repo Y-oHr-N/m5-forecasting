@@ -12,6 +12,7 @@ __all__ = [
     "trim_outliers",
     # Specidifc functions
     "create_ids",
+    "create_level_targets",
     "detrend",
 ]
 
@@ -68,6 +69,17 @@ def create_ids(df):
     df["dept_id"] = df["item_id"].str.extract(r"(\w+_\d+)_\d+")
     df["cat_id"] = df["dept_id"].str.extract(r"(\w+)_\d+")
     df["state_id"] = df["store_id"].str.extract(r"(\w+)_\d+")
+
+
+def create_level_targets(df):
+    for i, level_id in enumerate(level_ids):
+        if i == 0:
+            level_id = []
+        elif i == 11:
+            continue
+
+        grouped = df.groupby(level_id + parse_dates)
+        df[level_targets[i]] = grouped[level_targets[-1]].transform("sum")
 
 
 def detrend(df):
