@@ -6,6 +6,7 @@ __all__ = [
     "create_dataset",
     "create_exponential_sample_weight",
     "reduce_memory_usage",
+    "to_str",
 ]
 
 
@@ -75,3 +76,10 @@ def reduce_memory_usage(df, allow_float16=True):
                     df[col] = df[col].astype("float32")
             elif c_min > np.finfo("float32").min and c_max < np.finfo("float32").max:
                 df[col] = df[col].astype("float32")
+
+
+def to_str(x):
+    if isinstance(x, list):
+        return "_&_".join(x)
+
+    return x

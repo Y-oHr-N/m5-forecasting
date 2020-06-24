@@ -8,6 +8,7 @@ from workalendar.usa import Texas
 from workalendar.usa import Wisconsin
 
 from .constants import *
+from .utils import *
 
 __all__ = [
     # Functions for general features
@@ -82,16 +83,11 @@ def weekofmonth(dt):
 
 def create_aggregate_features(df, by_cols, cols):
     for by_col in by_cols:
-        if isinstance(by_col, list):
-            id_name = "_&_".join(by_col)
-        else:
-            id_name = by_col
-
         grouped = df.groupby(by_col)
 
         for agg_func_name, agg_func in agg_funcs.items():
             new_cols = [
-                aggregate_feature_name_format(id_name, col, agg_func_name)
+                aggregate_feature_name_format(to_str(by_col), col, agg_func_name)
                 for col in cols
             ]
             df[new_cols] = grouped[cols].transform(agg_func)
@@ -126,17 +122,14 @@ def create_diff_features(df, by_col, cols, periods):
 
 def create_ewm_features(df, by_cols, cols, windows):
     for by_col in by_cols:
-        if isinstance(by_col, list):
-            id_name = "_&_".join(by_col)
-        else:
-            id_name = by_col
-
         grouped = df.groupby(by_col)
 
         for col in cols:
             for j in windows:
                 for agg_func_name, agg_func in agg_funcs_for_ewm.items():
-                    new_col = ewm_feature_name_format(id_name, col, j, agg_func_name)
+                    new_col = ewm_feature_name_format(
+                        to_str(by_col), col, j, agg_func_name
+                    )
                     df[new_col] = grouped[col].apply(
                         lambda s: s.ewm(span=j).aggregate(agg_func)
                     )
@@ -144,16 +137,13 @@ def create_ewm_features(df, by_cols, cols, windows):
 
 def create_expanding_features(df, by_cols, cols):
     for by_col in by_cols:
-        if isinstance(by_col, list):
-            id_name = "_&_".join(by_col)
-        else:
-            id_name = by_col
-
         grouped = df.groupby(by_col)
 
         for col in cols:
             for agg_func_name, agg_func in agg_funcs_for_expanding.items():
-                new_col = expanding_feature_name_format(id_name, col, agg_func_name)
+                new_col = expanding_feature_name_format(
+                    to_str(by_col), col, agg_func_name
+                )
 
                 if agg_func_name == "min":
                     df[new_col] = grouped[col].cummin()
@@ -177,11 +167,6 @@ def create_pct_change_features(df, by_col, cols, periods):
 
 def create_rolling_features(df, by_cols, cols, windows, min_periods=None):
     for by_col in by_cols:
-        if isinstance(by_col, list):
-            id_name = "_&_".join(by_col)
-        else:
-            id_name = by_col
-
         grouped = df.groupby(by_col)
 
         for col in cols:
@@ -190,7 +175,7 @@ def create_rolling_features(df, by_cols, cols, windows, min_periods=None):
 
                 for agg_func_name, agg_func in agg_funcs_for_rolling.items():
                     new_col = rolling_feature_name_format(
-                        id_name, col, j, agg_func_name
+                        to_str(by_col), col, j, agg_func_name
                     )
                     feature = rolling.aggregate(agg_func)
 
@@ -201,14 +186,9 @@ def create_rolling_features(df, by_cols, cols, windows, min_periods=None):
 
 def create_scaled_features(df, by_cols, cols):
     for by_col in by_cols:
-        if isinstance(by_col, list):
-            id_name = "_&_".join(by_col)
-        else:
-            id_name = by_col
-
         grouped = df.groupby(by_col)
 
-        new_cols = [scaled_feature_name_format(id_name, col) for col in cols]
+        new_cols = [scaled_feature_name_format(to_str(by_col), col) for col in cols]
         df[new_cols] = df[cols] / grouped[cols].transform("max")
 
 

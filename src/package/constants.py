@@ -1,5 +1,7 @@
 import pathlib
 
+from .utils import *
+
 module_path = pathlib.Path(__file__)
 package_dir_path = module_path.parent
 src_dir_path = package_dir_path.parent
@@ -266,11 +268,7 @@ categorical_features = [
 raw_numerical_features = ["sell_price"]
 
 aggregate_features = [
-    aggregate_feature_name_format(
-        "_&_".join(by_col), raw_numerical_feature, agg_func_name
-    )
-    if isinstance(by_col, list)
-    else aggregate_feature_name_format(by_col, raw_numerical_feature, agg_func_name)
+    aggregate_feature_name_format(to_str(by_col), raw_numerical_feature, agg_func_name)
     for by_col in level_ids[1:11]
     for raw_numerical_feature in raw_numerical_features
     for agg_func_name in agg_funcs
@@ -279,11 +277,7 @@ aggregate_features = [
 calendar_features = [f"{col}_{attr}" for col in parse_dates for attr in attrs]
 
 expanding_features = [
-    expanding_feature_name_format(
-        "_&_".join(by_col), raw_numerical_feature, agg_func_name
-    )
-    if isinstance(by_col, list)
-    else expanding_feature_name_format(by_col, raw_numerical_feature, agg_func_name)
+    expanding_feature_name_format(to_str(by_col), raw_numerical_feature, agg_func_name)
     for by_col in level_ids[11:]
     for raw_numerical_feature in raw_numerical_features
     for agg_func_name in agg_funcs_for_expanding
@@ -296,9 +290,7 @@ pct_change_features = [
 ]
 
 scaled_features = [
-    scaled_feature_name_format("_&_".join(by_col), raw_numerical_feature)
-    if isinstance(by_col, list)
-    else scaled_feature_name_format(by_col, raw_numerical_feature)
+    scaled_feature_name_format(to_str(by_col), raw_numerical_feature)
     for by_col in level_ids[11:]
     for raw_numerical_feature in raw_numerical_features
 ]
@@ -308,9 +300,7 @@ shift_features_online = [shift_feature_name_format(target, i) for i in periods_o
 shift_features = shift_features_online + shift_features_batch
 
 rolling_features = [
-    rolling_feature_name_format("_&_".join(by_col), shift_feature, j, agg_func_name)
-    if isinstance(by_col, list)
-    else rolling_feature_name_format(by_col, shift_feature, j, agg_func_name)
+    rolling_feature_name_format(to_str(by_col), shift_feature, j, agg_func_name)
     for by_col in level_ids[11:]
     for shift_feature in shift_features
     for j in windows
