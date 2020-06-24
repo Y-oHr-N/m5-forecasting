@@ -348,7 +348,7 @@ def create_sell_price_ending(df):
 
 
 def create_snap(df):
-    df["snap"] = False
+    df["snap"] = df["snap_CA"]
 
     for state_id in ["TX", "WI"]:
         is_state = df["state_id"] == state_id
