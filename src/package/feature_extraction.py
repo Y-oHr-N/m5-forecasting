@@ -215,12 +215,15 @@ def create_days_since_release(df, offset=0):
         df.loc[is_oldest, "days_since_release"] += offset
 
 
-def create_days_until_event(df):
+def create_days_until_event(df, upper=None):
     is_event = df["event_name_1"].notnull()
     df["days_until_event"] = count_down_until_nonzero(is_event)
 
+    if upper is not None:
+        df["days_until_event"].clip(inplace=True, upper=upper)
 
-def create_days_until_non_working_day(df):
+
+def create_days_until_non_working_day(df, upper=None):
     tmp = df["date"].unique()
     tmp = pd.DataFrame(index=tmp)
 
@@ -243,6 +246,9 @@ def create_days_until_non_working_day(df):
 
     tmp = df[on].merge(tmp, copy=False, on=on)
     df["days_until_non_working_day"] = tmp["days_until_non_working_day"]
+
+    if upper is not None:
+        df["days_until_non_working_day"].clip(inplace=True, upper=upper)
 
 
 def create_event_name(df):
