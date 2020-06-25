@@ -295,8 +295,16 @@ scaled_features = [
     for raw_numerical_feature in raw_numerical_features
 ]
 
-shift_features_batch = [shift_feature_name_format(target, i) for i in periods_batch]
-shift_features_online = [shift_feature_name_format(target, i) for i in periods_online]
+shift_features_batch = [
+    shift_feature_name_format(level_target, i)
+    for level_target in level_targets[9:]
+    for i in periods_batch
+]
+shift_features_online = [
+    shift_feature_name_format(level_target, i)
+    for level_target in level_targets[9:]
+    for i in periods_online
+]
 shift_features = shift_features_online + shift_features_batch
 
 rolling_features = [

@@ -51,6 +51,8 @@ def load_processed(overwrite=False):
 
     interim = load_interim(overwrite=overwrite)
 
+    create_level_targets(interim)
+
     interim.dropna(inplace=True, subset=raw_numerical_features)
     interim.reset_index(drop=True, inplace=True)
 
@@ -62,7 +64,7 @@ def load_processed(overwrite=False):
     create_expanding_features(interim, level_ids[11:], raw_numerical_features)
     create_pct_change_features(interim, level_ids[11], raw_numerical_features, periods)
     create_scaled_features(interim, level_ids[11:], raw_numerical_features)
-    create_shift_features(interim, level_ids[11], [target], periods)
+    create_shift_features(interim, level_ids[11], level_targets[9:], periods)
     create_rolling_features(
         interim, level_ids[11:], shift_features, windows, min_periods=1
     )
