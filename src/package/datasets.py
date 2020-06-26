@@ -65,6 +65,7 @@ def load_processed(overwrite=False):
     create_pct_change_features(interim, level_ids[11], raw_numerical_features, periods)
     create_scaled_features(interim, level_ids[11:], raw_numerical_features)
     create_shift_features(interim, level_ids[11], level_targets[9:], periods)
+    create_count_up_until_nonzero_features(interim, level_ids[11], shift_features_batch)
     create_rolling_features(
         interim, level_ids[11:], shift_features, windows, min_periods=1
     )

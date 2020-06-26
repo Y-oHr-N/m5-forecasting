@@ -307,6 +307,11 @@ shift_features_online = [
 ]
 shift_features = shift_features_online + shift_features_batch
 
+count_up_until_nonzero_features = [
+    count_up_until_nonzero_feature_format(shift_feature)
+    for shift_feature in shift_features_batch
+]
+
 rolling_features = [
     rolling_feature_name_format(to_str(by_col), shift_feature, j, agg_func_name)
     for by_col in level_ids[11:]
@@ -320,6 +325,7 @@ numerical_features = (
     + raw_numerical_features
     + aggregate_features
     + calendar_features
+    + count_up_until_nonzero_features
     + expanding_features
     + pct_change_features
     + rolling_features
