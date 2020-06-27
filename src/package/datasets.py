@@ -71,6 +71,8 @@ def load_processed(overwrite=False):
     )
     create_days_since_release(interim)
     create_is_working_day(interim)
+    create_moon_phase(interim)
+    create_sell_price_ending(interim)
     create_snap(interim)
     label_encode(interim, categorical_features)
 

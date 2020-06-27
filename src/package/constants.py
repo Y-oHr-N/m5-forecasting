@@ -321,7 +321,7 @@ rolling_features = [
 ]
 
 numerical_features = (
-    ["days_since_release"]
+    ["days_since_release", "moon_phase", "sell_price_ending"]
     + raw_numerical_features
     + aggregate_features
     + calendar_features
