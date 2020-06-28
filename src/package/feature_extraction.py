@@ -38,9 +38,9 @@ __all__ = [
 ]
 
 
-def count_up_until_nonzero(s):
+def count_up_until_nonzero(s, initial_state=np.nan):
     out = np.full_like(s, np.nan, dtype="float32")
-    state = np.nan
+    state = initial_state
 
     for i, elm in enumerate(s):
         if np.isnan(elm):
@@ -56,8 +56,8 @@ def count_up_until_nonzero(s):
     return out
 
 
-def count_down_until_nonzero(s):
-    out = count_up_until_nonzero(s.iloc[::-1])
+def count_down_until_nonzero(s, initial_state=np.nan):
+    out = count_up_until_nonzero(s.iloc[::-1], initial_state=initial_state)
 
     return out[::-1]
 
@@ -105,12 +105,14 @@ def create_calendar_features(df, cols):
                 df[new_col] = getattr(df[col].dt, attr)
 
 
-def create_count_up_until_nonzero_features(df, by_col, cols):
+def create_count_up_until_nonzero_features(df, by_col, cols, initial_state=np.nan):
     grouped = df.groupby(by_col)
 
     for col in cols:
         new_col = count_up_until_nonzero_feature_format(col)
-        df[new_col] = grouped[col].transform(count_up_until_nonzero)
+        df[new_col] = grouped[col].transform(
+            count_up_until_nonzero, initial_state=initial_state
+        )
 
 
 def create_diff_features(df, by_col, cols, periods):
@@ -216,15 +218,17 @@ def create_days_since_release(df, offset=0):
         df.loc[is_oldest, "days_since_release"] += offset
 
 
-def create_days_until_event(df, upper=None):
+def create_days_until_event(df, initial_state=np.nan, upper=None):
     is_event = df["event_name_1"].notnull()
-    df["days_until_event"] = count_down_until_nonzero(is_event)
+    df["days_until_event"] = count_down_until_nonzero(
+        is_event, initial_state=initial_state
+    )
 
     if upper is not None:
         df["days_until_event"].clip(inplace=True, upper=upper)
 
 
-def create_days_until_non_working_day(df, upper=None):
+def create_days_until_non_working_day(df, initial_state=np.nan, upper=None):
     tmp = df["date"].unique()
     tmp = pd.DataFrame(index=tmp)
 
@@ -237,7 +241,9 @@ def create_days_until_non_working_day(df, upper=None):
     for state_id, cal in cals.items():
         tmp[state_id] = tmp.index.map(cal.is_working_day)
         tmp[state_id] = tmp[state_id].astype("bool")
-        tmp[state_id] = count_down_until_nonzero(~tmp[state_id])
+        tmp[state_id] = count_down_until_nonzero(
+            ~tmp[state_id], initial_state=initial_state
+        )
 
     tmp = tmp.stack()
     on = ["date", "state_id"]
