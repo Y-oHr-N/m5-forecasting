@@ -30,6 +30,7 @@ __all__ = [
     "create_event_type",
     "create_is_working_day",
     "create_moon_phase",
+    "create_n_items",
     "create_nearest_event_name",
     "create_nearest_event_type",
     "create_sell_price_ending",
@@ -311,6 +312,16 @@ def create_is_working_day(df):
 
 def create_moon_phase(df):
     df["moon_phase"] = df["date"].apply(moon_phase)
+
+
+def create_n_items(df):
+    grouped = df.groupby(["store_id", "date"])
+
+    is_not_selled = df["sell_price"].isnull()
+    df["n_items"] = df["sell_price"]
+    df.loc[is_not_selled, "n_items"] = np.nan
+
+    df["n_items"] = grouped["n_items"].transform("count")
 
 
 def create_nearest_event_name(df, limit=None):
