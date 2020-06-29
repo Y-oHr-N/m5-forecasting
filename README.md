@@ -3,6 +3,8 @@
 ## Usage
 
 ```
+git clone https://github.com/Y-oHr-N/m5-forecasting.git
+cd m5-forecasting
 # Install related packages
 pip install -r requirements.txt
 # Download raw data
