@@ -338,16 +338,16 @@ features = binary_features + categorical_features + numerical_features
 random_state = 0
 
 lgb_params = {
-    "bagging_fraction": 0.75,
+    "bagging_fraction": 0.8,
     "bagging_freq": 1,
     "feature_fraction": 0.8,
     "force_row_wise": True,
-    "lambda_l2": 0.1,
+    "lambda_l2": 0.001,
     "learning_rate": 0.03,
     "metric": "None",
-    "min_data_in_leaf": 1_000,
+    "min_data_in_leaf": 1_500,
     "n_jobs": -1,
-    "num_leaves": 128,
+    "num_leaves": 512,
     "objective": "tweedie",
     "seed": random_state,
     "tweedie_variance_power": 1.2,
