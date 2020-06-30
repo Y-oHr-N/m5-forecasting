@@ -47,17 +47,17 @@ work_dir_path.mkdir(exist_ok=True, parents=True)
 tasks = [
     "train_lgbm_reg",
     "predict",
+    "submit",
 ]
-
-if args.accuracy:
-    tasks.append("submit_accuracy")
-
-if args.uncertainty:
-    tasks.append("submit_uncertainty")
 
 for task in tasks:
     pm.execute_notebook(
         str(inputs_dir_path / (f"{task}.ipynb")),
         str(work_dir_path / (f"{task}.ipynb")),
-        parameters={"description": args.description, "src_dir": src_dir},
+        parameters={
+            "description": args.description,
+            "src_dir": src_dir,
+            "accuracy": args.accuracy,
+            "uncertainty": args.uncertainty,
+        },
     )
