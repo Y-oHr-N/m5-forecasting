@@ -1,5 +1,11 @@
 # m5-forecasting
 
+- single day to day LGBM wightout the magic multiplier
+- objective: tweedie(p=1.2)
+- 100+ features
+- target: sales * sell_price
+- custom time series split (3 fold)
+
 ## Usage
 
 ```
