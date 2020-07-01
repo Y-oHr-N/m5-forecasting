@@ -1,6 +1,5 @@
 import argparse
 import datetime
-import pathlib
 import sys
 
 import papermill as pm
