@@ -24,15 +24,12 @@ __all__ = [
     "create_scaled_features",
     # Functions for specific features
     "create_days_since_release",
-    "create_days_until_event",
     "create_days_until_non_working_day",
     "create_event_name",
     "create_event_type",
     "create_is_working_day",
     "create_moon_phase",
     "create_n_items",
-    "create_nearest_event_name",
-    "create_nearest_event_type",
     "create_sell_price_ending",
     "create_snap",
 ]
@@ -218,16 +215,6 @@ def create_days_since_release(df, offset=0):
         df.loc[is_oldest, "days_since_release"] += offset
 
 
-def create_days_until_event(df, initial_state=np.nan, upper=None):
-    is_event = df["event_name_1"].notnull()
-    df["days_until_event"] = count_down_until_nonzero(
-        is_event, initial_state=initial_state
-    )
-
-    if upper is not None:
-        df["days_until_event"].clip(inplace=True, upper=upper)
-
-
 def create_days_until_non_working_day(df, initial_state=np.nan, upper=None):
     tmp = df["date"].unique()
     tmp = pd.DataFrame(index=tmp)
@@ -328,20 +315,6 @@ def create_n_items(df):
     df.loc[is_not_selled, "n_items"] = np.nan
 
     df["n_items"] = grouped["n_items"].transform("count")
-
-
-def create_nearest_event_name(df, limit=None):
-    # TODO: handle event_name_2
-    df["nearest_event_name"] = df["event_name_1"].astype("object")
-    df["nearest_event_name"] = df["nearest_event_name"].bfill(limit=limit)
-    df["nearest_event_name"] = df["nearest_event_name"].astype("category")
-
-
-def create_nearest_event_type(df, limit=None):
-    # TODO: handle event_type_2
-    df["nearest_event_type"] = df["event_type_1"].astype("object")
-    df["nearest_event_type"] = df["nearest_event_type"].bfill(limit=limit)
-    df["nearest_event_type"] = df["nearest_event_type"].astype("category")
 
 
 def create_sell_price_ending(df):

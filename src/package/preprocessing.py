@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from sklearn.linear_model import LinearRegression
 from sklearn.utils import check_random_state
 
 from .constants import *
@@ -13,7 +12,6 @@ __all__ = [
     # Specidifc functions
     "create_ids",
     "create_level_targets",
-    "detrend",
 ]
 
 
@@ -80,35 +78,3 @@ def create_level_targets(df):
 
         grouped = df.groupby(level_id + parse_dates)
         df[level_targets[i]] = grouped[level_targets[-1]].transform("sum")
-
-
-def detrend(df):
-    model = LinearRegression()
-
-    X = np.arange(train_days + 2 * evaluation_days)
-    X = X.reshape(-1, 1)
-
-    Y = df.pivot_table(columns=level_ids[11], dropna=False, index="date", values=target)
-
-    is_selled = df.pivot_table(
-        columns=level_ids[11], dropna=False, index="date", values="sell_price"
-    )
-    is_selled = is_selled.notnull()
-
-    Y_mean = Y[is_selled].mean()
-
-    Y.where(is_selled, Y_mean, axis=1, inplace=True)
-
-    model.fit(X[:train_days], Y.iloc[:train_days])
-
-    tmp = model.predict(X)
-    tmp = pd.DataFrame(tmp, columns=Y.columns, index=Y.index)
-    tmp = tmp.unstack()
-    on = ["item_id", "store_id", "date"]
-
-    tmp.rename("trend", inplace=True)
-
-    tmp = df[on].merge(tmp, copy=False, on=on)
-
-    df["trend"] = tmp["trend"]
-    df[f"detrended_{target}"] = df[target] - tmp["trend"]
