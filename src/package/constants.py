@@ -332,7 +332,7 @@ numerical_features = (
 
 features = binary_features + categorical_features + numerical_features
 
-random_state = 0
+random_state = 1
 
 lgb_params = {
     "bagging_fraction": 0.8,
